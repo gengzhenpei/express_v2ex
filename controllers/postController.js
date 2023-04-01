@@ -1,13 +1,6 @@
 const User = require('../models/user');
 const Post = require('../models/post');
-const Joi = require('joi');
 
-// 定义用户输入数据的校验规则
-const userSchema = Joi.object({
-	name: Joi.string().required(),
-	age: Joi.number().required().min(0),
-	email: Joi.string().required().email()
-});
 
 // 查询所有文章，并同时查询出文章所属的用户信息
 exports.getAllPosts = async (req, res) => {
@@ -28,23 +21,16 @@ exports.getAllPosts = async (req, res) => {
 };
 
 
-exports.createUser = async (req, res) => {
-	const { error, value } = userSchema.validate(req.body);
-	if (error) {
-		res.status(400).json({ error: error.details[0].message });
-	} else {
-		// 数据合法，可以将数据保存到数据库中
-		try {
-			const user = new User(req.body);
-			await user.save();
-			res.status(201).json(user);
-		} catch (error) {
-			res.status(400).json({
-				message: error.message
-			});
-		}
+exports.createPost = async (req, res) => {
+	try {
+		const post = new Post(req.body);
+		await post.save();
+		res.status(201).json(post);
+	} catch (error) {
+		res.status(400).json({
+			message: error.message
+		});
 	}
-
 };
 
 exports.getUsers = async (req, res) => {
@@ -74,7 +60,7 @@ exports.getUser = async (req, res) => {
 	}
 };
 
-exports.updateUser = async (req, res) => {
+exports.updatePost = async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id);
 		if (!user) {
@@ -92,17 +78,17 @@ exports.updateUser = async (req, res) => {
 	}
 };
 
-exports.deleteUser = async (req, res) => {
+exports.deletePost = async (req, res) => {
 	try {
-		const user = await User.findById(req.params.id);
-		if (!user) {
+		const post = await Post.findOne({where: {id: req.params.id}});
+		if (!post) {
 			return res.status(404).json({
-				message: 'User not found'
+				message: 'Post not found'
 			});
 		}
-		await user.remove();
+		await post.destroy();
 		res.json({
-			message: 'User deleted'
+			message: 'Post deleted'
 		});
 	} catch (error) {
 		res.status(500).json({

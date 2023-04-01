@@ -1,0 +1,31 @@
+一般情况下，数据的字段校验逻辑应该放在控制器层，以保证数据的合法性。控制器可以调用模型层来获取、更新、删除数据，但控制器本身应该负责数据的校验和处理。
+
+在 Node.js 中，我们可以使用一些库来实现数据校验，如 Joi、Validator.js 等。这些库可以帮助我们检查数据是否符合指定的规则，例如数据类型、长度、范围等等。
+
+下面是一个使用 Joi 库来校验用户输入数据的示例：
+
+const Joi = require('joi');
+
+// 定义用户输入数据的校验规则
+const userSchema = Joi.object({
+  name: Joi.string().required(),
+  age: Joi.number().required().min(0),
+  email: Joi.string().required().email()
+});
+
+// 在控制器中使用校验规则来验证用户输入数据
+exports.createUser = (req, res) => {
+  const { error, value } = userSchema.validate(req.body);
+  if (error) {
+    res.status(400).json({ error: error.details[0].message });
+  } else {
+    // 数据合法，可以将数据保存到数据库中
+    // ...
+  }
+};
+
+在这个示例中，我们使用了 Joi 库来定义一个用户输入数据的校验规则，包括了 name、age 和 email 三个字段，分别规定了它们的类型、是否必填、以及其他的校验规则。
+
+然后，在控制器中，我们使用 userSchema.validate() 方法来验证用户输入数据。如果数据合法，则可以继续将数据保存到数据库中，否则将返回一个 400 错误，提示用户输入数据不符合要求。
+
+需要注意的是，这个示例中只是一个简单的校验逻辑，实际情况可能更加复杂，需要根据具体需求进行调整。

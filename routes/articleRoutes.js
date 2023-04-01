@@ -1,24 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const UserController = require('../controllers/userController');
+const ArticleController = require('../controllers/articleController');
 
-// 创建新用户
-router.post('/getallposts', UserController.getAllPosts);
+// 获取所有
+router.post('/allArticle', ArticleController.getAllArticles);
 
-// 创建新用户
-router.post('/users', UserController.createUser);
+// 创建新文章
+router.post('/addArticle', ArticleController.createArticle);
 
 // 获取所有用户
-router.get('/users', UserController.getUsers);
+router.get('/users', ArticleController.getUsers);
 
 // 获取单个用户
-router.get('/users/:id', UserController.getUser);
+router.get('/users/:id', ArticleController.getUser);
 
 // 更新用户信息
-router.put('/users/:id', UserController.updateUser);
+router.put('/post/:id', ArticleController.updatePost);
 
 // 删除用户
-router.delete('/users/:id', UserController.deleteUser);
+router.delete('/post/:id', ArticleController.deletePost);
 
 
 module.exports = router;

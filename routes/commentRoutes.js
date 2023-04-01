@@ -1,25 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const UserController = require('../controllers/userController');
+const CommentController = require('../controllers/commentController');
 
-// 创建新用户
-router.post('/getallposts', UserController.getAllPosts);
-
-// 创建新用户
-router.post('/users', UserController.createUser);
-
-// 获取所有用户
-router.get('/users', UserController.getUsers);
-
-// 获取单个用户
-router.get('/users/:id', UserController.getUser);
-
-// 更新用户信息
-router.put('/users/:id', UserController.updateUser);
-
-// 删除用户
-router.delete('/users/:id', UserController.deleteUser);
-
+// 查询
+router.post('/getByArticleId', CommentController.getByArticleId);
+// 创建
+router.post('/addComment', CommentController.create);
 
 module.exports = router;
 
