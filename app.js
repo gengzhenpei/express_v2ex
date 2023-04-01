@@ -2,6 +2,11 @@ const express = require('express')
 const app = express()
 const userRoutes = require('./routes/userRoutes');
 const mongoose = require('mongoose');
+var bodyParser = require('body-parser')
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended:true}))
+
 mongoose.connect('mongodb://localhost/my_database', {
     useNewUrlParser: true,
     useUnifiedTopology: true
