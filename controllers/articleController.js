@@ -1,26 +1,24 @@
 const User = require('../models/user');
-const Post = require('../models/post');
-const Joi = require('joi');
+const Article = require('../models/article');
+const Category = require('../models/category');
 
-// 定义用户输入数据的校验规则
-const userSchema = Joi.object({
-	name: Joi.string().required(),
-	age: Joi.number().required().min(0),
-	email: Joi.string().required().email()
-});
 
 // 查询所有文章，并同时查询出文章所属的用户信息
-exports.getAllPosts = async (req, res) => {
+exports.getAllArticles = async (req, res) => {
 	try {
-		const posts = await Post.findAll({
+		const articles = await Article.findAll({
 			include: [
 				{
 					model: User,
 					attributes: ['id', 'name', 'email']
+				},
+				{
+					model: Category,
+					attributes: ['id', 'name']
 				}
 			]
 		});
-		res.json(posts);
+		res.json(articles);
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ error: 'Server error' });
@@ -28,23 +26,16 @@ exports.getAllPosts = async (req, res) => {
 };
 
 
-exports.createUser = async (req, res) => {
-	const { error, value } = userSchema.validate(req.body);
-	if (error) {
-		res.status(400).json({ error: error.details[0].message });
-	} else {
-		// 数据合法，可以将数据保存到数据库中
-		try {
-			const user = new User(req.body);
-			await user.save();
-			res.status(201).json(user);
-		} catch (error) {
-			res.status(400).json({
-				message: error.message
-			});
-		}
+exports.createArticle = async (req, res) => {
+	try {
+		const article = new Article(req.body);
+		await article.save();
+		res.status(201).json(article);
+	} catch (error) {
+		res.status(400).json({
+			message: error.message
+		});
 	}
-
 };
 
 exports.getUsers = async (req, res) => {
@@ -74,7 +65,7 @@ exports.getUser = async (req, res) => {
 	}
 };
 
-exports.updateUser = async (req, res) => {
+exports.updatePost = async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id);
 		if (!user) {
@@ -92,17 +83,17 @@ exports.updateUser = async (req, res) => {
 	}
 };
 
-exports.deleteUser = async (req, res) => {
+exports.deletePost = async (req, res) => {
 	try {
-		const user = await User.findById(req.params.id);
-		if (!user) {
+		const post = await Post.findOne({where: {id: req.params.id}});
+		if (!post) {
 			return res.status(404).json({
-				message: 'User not found'
+				message: 'Post not found'
 			});
 		}
-		await user.remove();
+		await post.destroy();
 		res.json({
-			message: 'User deleted'
+			message: 'Post deleted'
 		});
 	} catch (error) {
 		res.status(500).json({
