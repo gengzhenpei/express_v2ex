@@ -4,7 +4,7 @@ const sequelize = require('../database');
 const moment = require('moment');
 const User = require('./user');
 const Category = require('./category');
-
+// const Comment = require('./comment');
 
 const Article = sequelize.define('article', {
   id: {

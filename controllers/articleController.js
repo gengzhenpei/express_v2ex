@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Article = require('../models/article');
 const Category = require('../models/category');
+const Comment = require('../models/comment');
 
 
 // 查询所有文章，并同时查询出文章所属的用户信息
@@ -15,10 +16,15 @@ exports.getAllArticles = async (req, res) => {
 				{
 					model: Category,
 					attributes: ['id', 'name']
+				},
+				{
+					model: Comment,
+					attributes: ['id', 'content']
 				}
 			]
 		});
-		res.json(articles);
+		// res.json(articles);
+		res.status(200).json({ data: articles });
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ error: 'Server error' });

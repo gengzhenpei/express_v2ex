@@ -10,6 +10,24 @@ mongoose.connect('mongodb://localhost/my_database', {
     useUnifiedTopology: true
 });
 
+//express后端配置：
+app.all('*', function(req, res, next) {
+    res.header("Access-Control-Allow-Credentials","true");  //服务端允许携带cookie
+    res.header("Access-Control-Allow-Origin", req.headers.origin);  //允许的访问域
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");  //访问头
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  //访问方法
+    res.header("X-Powered-By",' 3.2.1');
+    res.header("Content-Type", "application/json;charset=utf-8");
+    if (req.method == 'OPTIONS') {
+        res.setHeader("Access-Control-Allow-Headers", "*");
+        res.header("Access-Control-Max-Age", 86400);
+        res.sendStatus(204); //让options请求快速返回.
+    }
+    else {
+        next();
+    }
+});
+
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json());
 

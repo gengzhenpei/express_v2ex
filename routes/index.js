@@ -13,7 +13,7 @@ const commentRoutes = require('./commentRoutes');
 router.use('/article', articleRoutes)
 // router.use('/posts', postRoutes)
 router.use('/user', userRoutes)
-router.use('/catogery', categoryRoutes)
+router.use('/category', categoryRoutes)
 router.use('/comment', commentRoutes)
 
 

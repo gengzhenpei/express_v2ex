@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const CategoryController = require('../controllers/categoryController');
 
-// 创建
+// 查所有 
 router.post('/all', CategoryController.getAll);
 
 // 创建

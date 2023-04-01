@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const ArticleController = require('../controllers/articleController');
 
-// 创建新用户
-router.post('/getall', ArticleController.getAllArticles);
+// 获取所有
+router.post('/all', ArticleController.getAllArticles);
 
 // 创建新文章
 router.post('/add', ArticleController.createArticle);
