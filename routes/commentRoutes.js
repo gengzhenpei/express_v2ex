@@ -3,7 +3,7 @@ const router = express.Router();
 const CommentController = require('../controllers/commentController');
 
 // 查询
-router.post('/getByArticleId', CommentController.getByArticleId);
+router.post('/getComments', CommentController.getComments);
 // 创建
 router.post('/addComment', CommentController.create);
 

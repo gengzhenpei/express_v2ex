@@ -1,25 +1,34 @@
 const User = require('../models/user');
 const Article = require('../models/article');
 const Comment = require('../models/comment');
+const { Resolve } = require('../utils/helper');
+const resolve = new Resolve();
+const Joi = require('joi');
 
-
+// 定义数据的校验规则
+const Schema = Joi.object({
+	content: Joi.string().required(),
+	user_id: Joi.number().required().min(0),
+	article_id: Joi.number().required().min(0),
+});
 // 查询所有，并同时查询所属的用户信息
-exports.getByArticleId = async (req, res) => {
+exports.getComments = async (req, res) => {
 	try {
+		const { article_id, page_size = 10, status, page = 1 } = req.body;
+		// 筛选方式
+		let filter = {
+			article_id: article_id
+		};
 		const comment = await Comment.findAll({
-			where: {article_id: req.body.article_id},
+			where: filter,
 			include: [
-				{
-					model: Article,
-					attributes: ['id', 'title']
-				},
 				{
 					model: User,
 					attributes: ['id', 'name']
 				}
 			]
 		});
-		res.json(comment);
+		res.json(resolve.json(comment));
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ error: 'Server error' });
@@ -28,15 +37,21 @@ exports.getByArticleId = async (req, res) => {
 
 
 exports.create = async (req, res) => {
-	try {
-		const comment = new Comment(req.body);
-		await comment.save();
-		res.status(201).json(comment);
-	} catch (error) {
-		res.status(400).json({
-			message: error.message
-		});
+	const { error, value } = Schema.validate(req.body);
+	if(error) {
+		res.status(400).json({ error: error.details[0].message });
+	} else {
+		try {
+			const comment = new Comment(req.body);
+			await comment.save();
+			res.json(resolve.json(comment));
+		} catch (error) {
+			res.status(400).json({
+				message: error.message
+			});
+		}
 	}
+	
 };
 
 exports.getUsers = async (req, res) => {

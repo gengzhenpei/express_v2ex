@@ -3,16 +3,19 @@ const router = express.Router();
 const ArticleController = require('../controllers/articleController');
 
 // 获取所有
+router.post('/articleList', ArticleController.ArticlesList);
+
+// 获取所有
 router.post('/allArticle', ArticleController.getAllArticles);
 
 // 创建新文章
 router.post('/addArticle', ArticleController.createArticle);
 
 // 获取所有用户
-router.get('/users', ArticleController.getUsers);
+router.post('/articles', ArticleController.getArticles);
 
 // 获取单个用户
-router.get('/users/:id', ArticleController.getUser);
+router.post('/article', ArticleController.getArticle);
 
 // 更新用户信息
 router.put('/post/:id', ArticleController.updatePost);

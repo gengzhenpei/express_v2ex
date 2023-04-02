@@ -5,6 +5,63 @@ const Comment = require('../models/comment');
 const { Resolve } = require('../utils/helper');
 const resolve = new Resolve();
 
+
+//查询 分页
+exports.ArticlesList = async (req, res) => {
+	console.log('req.user', req.user)
+	try {
+		const { category_id, keyword, page_size = 10, status, page = 1 } = req.body;
+		// 筛选方式
+		let filter = {
+			category_id: category_id
+		};
+		const articles = await Article.findAndCountAll({
+			limit: Number(page_size), //每页10条
+			offset: (page - 1) * Number(page_size),
+			where: filter,
+			order: [
+				['created_at', 'desc']
+			],
+			include: [
+				{
+					model: User,
+					attributes: ['id', 'name', 'email']
+				},
+				{
+					model: Category,
+					attributes: ['id', 'name']
+				},
+				{
+					model: Comment,
+					order: [['created_at', 'desc']],
+					attributes: ['id', 'content'],
+					include: [{
+						model: User,
+						attributes: ['id', 'name'],
+					}]
+				}
+			]
+		});
+		const data = {
+			data: articles.rows,
+			// 分页
+			meta: {
+				current_page: parseInt(page),
+				per_page: 10,
+				count: articles.count,
+				total: articles.count,
+				total_pages: Math.ceil(articles.count / 10),
+			}
+		}
+		// res.json(articles);
+		res.json(resolve.json(data));
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: 'Server error' });
+	}
+};
+
+
 // 查询所有文章，并同时查询出文章所属的用户信息
 exports.getAllArticles = async (req, res) => {
 	try {
@@ -51,10 +108,10 @@ exports.createArticle = async (req, res) => {
 	}
 };
 
-exports.getUsers = async (req, res) => {
+exports.getArticles = async (req, res) => {
 	try {
-		const users = await User.find();
-		res.json(users);
+		const articles = await Article.find();
+		res.json(articles);
 	} catch (error) {
 		res.status(500).json({
 			message: error.message
@@ -62,15 +119,15 @@ exports.getUsers = async (req, res) => {
 	}
 };
 
-exports.getUser = async (req, res) => {
+exports.getArticle= async (req, res) => {
 	try {
-		const user = await User.findById(req.params.id);
-		if (!user) {
+		const article = await Article.findByPk(req.body.id);
+		if (!article) {
 			return res.status(404).json({
 				message: 'User not found'
 			});
 		}
-		res.json(user);
+		res.json(resolve.json(article));
 	} catch (error) {
 		res.status(500).json({
 			message: error.message

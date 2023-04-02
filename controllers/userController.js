@@ -1,13 +1,48 @@
 const User = require('../models/user');
 const Post = require('../models/post');
 const Joi = require('joi');
-
+const jwt = require('jsonwebtoken')
+const { Resolve } = require('../utils/helper');
+const resolve = new Resolve();
+// 生成秘钥/解密 需要的key
+const secretKey = 'lihaichao'
 // 定义用户输入数据的校验规则
 const userSchema = Joi.object({
 	name: Joi.string().required(),
 	age: Joi.number().required().min(0),
 	email: Joi.string().required().email()
 });
+
+//登录
+exports.login = async (req, res) => {
+	try {
+		const { email, password } = req.body;
+		// 筛选方式
+		let filter = {
+			email: email
+		};
+		const user = await User.findOne({
+			where: filter
+		});
+		if (!user) {
+			return res.status(404).json({
+				message: 'User not found'
+			});
+		}
+		const tokenStr = jwt.sign({ name: user.name }, secretKey, { expiresIn: '30h' })
+		const data = {
+			user: user,
+			token: tokenStr
+		}
+
+		res.json(resolve.json(data));
+	} catch (error) {
+		res.status(500).json({
+			message: error.message
+		});
+	}
+};
+
 
 // 查询所有文章，并同时查询出文章所属的用户信息
 exports.getAllPosts = async (req, res) => {

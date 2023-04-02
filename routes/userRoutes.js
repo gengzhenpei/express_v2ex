@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/userController');
 
+// 登录
+router.post('/login', UserController.login);
+
 // 创建新用户
 router.post('/getallposts', UserController.getAllPosts);
 
