@@ -2,14 +2,15 @@ const User = require('../models/user');
 const Post = require('../models/post');
 const Joi = require('joi');
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 const { Resolve } = require('../utils/helper');
 const resolve = new Resolve();
 // 生成秘钥/解密 需要的key
 const secretKey = 'lihaichao'
 // 定义用户输入数据的校验规则
-const userSchema = Joi.object({
+const Schema = Joi.object({
 	name: Joi.string().required(),
-	age: Joi.number().required().min(0),
+	password: Joi.string().required(),
 	email: Joi.string().required().email()
 });
 
@@ -29,7 +30,12 @@ exports.login = async (req, res) => {
 				message: 'User not found'
 			});
 		}
-		const tokenStr = jwt.sign({ name: user.name }, secretKey, { expiresIn: '30h' })
+		// 验证密码是否正确
+		const correct = bcrypt.compareSync(password, user.password);
+		if (!correct) {
+			res.json(resolve.failAuth());
+		}
+		const tokenStr = jwt.sign({id: user.id, name: user.name }, secretKey, { expiresIn: '30h' })
 		const data = {
 			user: user,
 			token: tokenStr
@@ -64,7 +70,7 @@ exports.getAllPosts = async (req, res) => {
 
 
 exports.createUser = async (req, res) => {
-	const { error, value } = userSchema.validate(req.body);
+	const { error, value } = Schema.validate(req.body);
 	if (error) {
 		res.status(400).json({ error: error.details[0].message });
 	} else {

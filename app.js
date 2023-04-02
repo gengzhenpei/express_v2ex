@@ -2,23 +2,15 @@ const express = require('express')
 const app = express()
 const routes = require('./routes');
 var bodyParser = require('body-parser')
-const mongoose = require('mongoose');
-var bodyParser = require('body-parser')
-const jwt = require('jsonwebtoken')
 const expressJWT = require('express-jwt')
+const config = require('./config')
 
 // 生成秘钥/解密 需要的key
-const secretKey = 'lihaichao'
+// const secretKey = 'lihaichao'
 
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-
-mongoose.connect('mongodb://localhost/my_database', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
 
 
 //express后端配置：
@@ -44,7 +36,7 @@ app.use(bodyParser.json());
 // 静态文件中间件
 app.use(express.static('public'));
 // 配置express-jwt 可通过 req.auth 获取token信息
-app.use(expressJWT.expressjwt({ secret: secretKey, algorithms: ["HS256"] }).unless({ path: ['/api/user/login', '/api/category/getCategory'] }))
+app.use(expressJWT.expressjwt({ secret: config.secretKey, algorithms: ["HS256"] }).unless({ path: ['/api/user/login', '/api/category/getCategory','/api/user/createUser'] }))
 
 // 注册路由
 app.use('/api', routes);

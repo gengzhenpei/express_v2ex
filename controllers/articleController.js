@@ -8,7 +8,7 @@ const resolve = new Resolve();
 
 //查询 分页
 exports.ArticlesList = async (req, res) => {
-	console.log('req.user', req.user)
+	console.log('req.auth-article', req.auth)
 	try {
 		const { category_id, keyword, page_size = 10, status, page = 1 } = req.body;
 		// 筛选方式

@@ -5,11 +5,11 @@ const UserController = require('../controllers/userController');
 // 登录
 router.post('/login', UserController.login);
 
-// 创建新用户
+// 查询所有用户
 router.post('/getallposts', UserController.getAllPosts);
 
 // 创建新用户
-router.post('/users', UserController.createUser);
+router.post('/createUser', UserController.createUser);
 
 // 获取所有用户
 router.get('/users', UserController.getUsers);
