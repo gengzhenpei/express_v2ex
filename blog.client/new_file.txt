@@ -1,0 +1,19 @@
+以下是一些基于 Express 框架的开源项目和它们的源代码：
+
+Ghost - 博客平台：https://github.com/TryGhost/Ghost
+
+KeystoneJS - CMS 框架：https://github.com/keystonejs/keystone-5
+
+Strapi - 开源的 Headless CMS：https://github.com/strapi/strapi
+
+Express Gateway - 微服务 API 网关：https://github.com/ExpressGateway/express-gateway
+
+Feathers - 实时应用程序框架：https://github.com/feathersjs/feathers
+
+NodeBB - 论坛平台：https://github.com/NodeBB/NodeBB
+
+GitLab - 自托管的 Git 仓库管理工具：https://gitlab.com/gitlab-org/gitlab-ce
+
+这些项目提供了丰富的功能和示例代码，可以供开发人员学习和参考。
+
+https://github.com/NodeBB/NodeBB
