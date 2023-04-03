@@ -41,11 +41,21 @@ const Comment = sequelize.define('comment', {
     defaultValue: 0,
     comment: '匿名评论时填的邮箱'
   },
+  // created_at: {
+  //   type: Sequelize.DATE,
+  //   allowNull: true,
+  //   defaultValue: moment().format('YYYY-MM-DD HH:mm:ss'),
+  //   comment: '创建时间'
+  // },
   created_at: {
+    // type: Sequelize.DATE,
+    // allowNull: true,
+    // comment: '创建时间',
+    // get() {
+    //   return moment().format('YYYY-MM-DD HH:mm:ss');
+    // }
     type: Sequelize.DATE,
-    allowNull: true,
-    defaultValue: moment().format('YYYY-MM-DD HH:mm:ss'),
-    comment: '创建时间'
+    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
   }
 });
 

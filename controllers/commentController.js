@@ -11,7 +11,7 @@ const Schema = Joi.object({
 	user_id: Joi.number().required().min(0),
 	article_id: Joi.number().required().min(0),
 });
-// 查询所有，并同时查询所属的用户信息
+// 根据文章id 查询所有，并同时查询所属的用户信息
 exports.getComments = async (req, res) => {
 	try {
 		const { article_id, page_size = 10, status, page = 1 } = req.body;
@@ -21,6 +21,9 @@ exports.getComments = async (req, res) => {
 		};
 		const comment = await Comment.findAll({
 			where: filter,
+			order: [
+				['created_at', 'desc'],
+			],
 			include: [
 				{
 					model: User,
@@ -37,6 +40,7 @@ exports.getComments = async (req, res) => {
 
 
 exports.create = async (req, res) => {
+	req.body.user_id = req.auth.id;
 	const { error, value } = Schema.validate(req.body);
 	if(error) {
 		res.status(400).json({ error: error.details[0].message });

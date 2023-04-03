@@ -4,17 +4,25 @@ const Category = require('../models/category');
 const Comment = require('../models/comment');
 const { Resolve } = require('../utils/helper');
 const resolve = new Resolve();
-
-
+const Joi = require('joi');
+// 定义数据的校验规则
+const Schema = Joi.object({
+	title: Joi.string().required(),
+	content: Joi.string().required(),
+	user_id: Joi.number().required().min(0),
+	category_id: Joi.number().required().min(0),
+});
 //查询 分页
 exports.ArticlesList = async (req, res) => {
-	console.log('req.auth-article', req.auth)
 	try {
 		const { category_id, keyword, page_size = 10, status, page = 1 } = req.body;
 		// 筛选方式
 		let filter = {
-			category_id: category_id
 		};
+		// 筛选方式：存在分类ID
+		if (category_id) {
+			filter.category_id = category_id;
+		}
 		const articles = await Article.findAndCountAll({
 			limit: Number(page_size), //每页10条
 			offset: (page - 1) * Number(page_size),
@@ -97,14 +105,22 @@ exports.getAllArticles = async (req, res) => {
 
 
 exports.createArticle = async (req, res) => {
-	try {
-		const article = new Article(req.body);
-		await article.save();
-		res.status(201).json(article);
-	} catch (error) {
-		res.status(400).json({
-			message: error.message
-		});
+	req.body.user_id = req.auth.id;
+	console.log('req.body', req.body)
+	const { error, value } = Schema.validate(req.body);
+	if (error) {
+		res.status(400).json({ error: error.details[0].message });
+	} else {
+		try {
+
+			const article = new Article(req.body);
+			await article.save();
+			res.json(resolve.json(article));
+		} catch (error) {
+			res.status(400).json({
+				message: error.message
+			});
+		}
 	}
 };
 
@@ -119,9 +135,19 @@ exports.getArticles = async (req, res) => {
 	}
 };
 
-exports.getArticle= async (req, res) => {
+exports.getArticle = async (req, res) => {
 	try {
-		const article = await Article.findByPk(req.body.id);
+		const article = await Article.findOne({
+			where: {
+				id: req.body.id
+			},
+			include: [
+				{
+					model: Category,
+					attributes: ['id', 'name']
+				}
+			]
+		});
 		if (!article) {
 			return res.status(404).json({
 				message: 'User not found'
