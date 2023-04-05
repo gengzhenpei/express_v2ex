@@ -7,7 +7,7 @@
 					<a href="/member/gracechen"><img src="https://cdn.v2ex.com/avatar/42b6/1e2c/12305_xlarge.png?m=1673353113" class="avatar" border="0" align="default" width="73" style="width: 73px; max-height: 73px;" alt="gracechen"></a>
 				</div>
 				<a href="/">V2EX</a> <span class="chevron">&nbsp;›&nbsp;</span>
-				<a href="/go/jobs">{{article.Category.name}}</a>
+				<a v-if="article.Category" href="/go/jobs">{{article.Category.name}}</a>
 				<div class="sep10"></div>
 				<h1>{{article.title}}</h1>
 				<small class="gray">

@@ -15,6 +15,7 @@ const Schema = Joi.object({
 //查询 分页
 exports.ArticlesList = async (req, res) => {
 	try {
+		console.log('req.body', req.body)
 		const { category_id, keyword, page_size = 10, status, page = 1 } = req.body;
 		// 筛选方式
 		let filter = {
@@ -55,10 +56,10 @@ exports.ArticlesList = async (req, res) => {
 			// 分页
 			meta: {
 				current_page: parseInt(page),
-				per_page: 10,
+				per_page: page_size,
 				count: articles.count,
 				total: articles.count,
-				total_pages: Math.ceil(articles.count / 10),
+				total_pages: Math.ceil(articles.count / page_size),
 			}
 		}
 		// res.json(articles);

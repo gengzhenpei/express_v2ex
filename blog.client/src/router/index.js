@@ -20,6 +20,11 @@ export default new Router({
 					component: resolve => require(['../view/index/index.vue'], resolve)
 				}, 
 				{
+					path: '/go/:category_id?',
+					name: 'Go',
+					component: resolve => require(['../view/go/go.vue'], resolve)
+				}, 
+				{
 					path: '/about',
 					component: resolve => require(['../components/about.vue'], resolve)
 				}, 

@@ -7,7 +7,8 @@ router.post('/getCategory', CategoryController.getAll);
 
 // 创建
 router.post('/addCategory', CategoryController.create);
-
+// 类别详情
+router.post('/categoryDetail', CategoryController.getCategory);
 
 module.exports = router;
 

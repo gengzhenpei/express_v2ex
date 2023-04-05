@@ -1,20 +1,63 @@
 <template>
 	<div id="Main" class="">
 		<div class="sep20"></div>
-		<div class="box">
-			<div class="inner" id="Tabs">
-				<a v-for="(item,index) in category_list_first" :key="index" :href="'/?tab='+item.id" :class="{'tab_current': query.category_id==item.id}" class="tab">{{item.name}}</a>
-			</div>
-			<div class="cell" id="SecondaryTabs">
-				<div class="">
-					<a v-for="(item, index) in category_list_second" :key="index" :href="'/go/'+item.id">{{item.name}}&nbsp; &nbsp;</a> 
+		<!--头部-->
+		<div class="box box-title node-header">
+			<div class="cell page-content-header">
+				<img src="https://cdn.v2ex.com/navatar/c74d/97b0/16_xlarge.png?m=1650127281" border="0" align="default" width="64" alt="share">
+				<div>
+					<div class="title">
+						<div class="node-breadcrumb">
+							<a href="/">V2EX</a> <span class="chevron">&nbsp;›&nbsp;</span> {{category_detail.name}}</div>
+						<span class="topic-count">主题总数 <strong>{{meta.total}}</strong></span>
+					</div>
+					<div class="intro">{{category_detail.subtitle}}</div>
 				</div>
-				<!--<div class="fr">
-					<a href="/new/free">我要送东西</a> &nbsp; &nbsp;
-					<a href="/new/exchange">我要换东西</a> &nbsp; &nbsp;
-					<a href="/new/all4all">我要出二手</a>
-				</div>-->
 			</div>
+			<div class="cell_ops flex-one-row">
+				<input type="button" class="super normal button" value="创建新主题" @click="openPage('/write?node='+query.category_id)">
+				<div>
+					<a href="/favorite/node/16?once=13367">
+						加入收藏
+					</a>
+				</div>
+			</div>
+		</div>
+		<!--内容-->
+		<div class="box">
+			<!--分页-->
+			<div class="cell">
+				<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					<tbody>
+						<tr>
+							<td width="92%" align="left">
+								<template v-if="meta.total_pages<=10">
+									<a v-for="(i,ind) in meta.total_pages" @click.prevent="pageClick(i)" :href="'/go/'+query.category_id+'?p='+i" :class="{'page_current': query.page==i}" class="page_normal">{{i}}</a>
+								</template>
+								<template v-else>
+									<a v-for="(i,ind) in 9" @click.prevent="pageClick(i)" :href="'/go/'+query.category_id+'?p='+i" :class="{'page_current': query.page==i}" class="page_normal">{{i}}</a>
+									<a :href="'/go/'+query.category_id+'?p=10'" class="page_normal">10</a><span class="fade"> ... </span>
+									<a :href="'/go/'+query.category_id+'?p='+meta.total_pages" class="page_normal">{{meta.total_pages}}</a>
+								</template>
+								<!--<a href="/go/share?p=10" class="page_normal">10</a><span class="fade"> ... </span>
+								<a href="/go/share?p=1901" class="page_normal">1901</a>-->
+								<input v-model="page_input_value" @change="pageChange()" type="number" class="page_input" autocomplete="off" min="1" max="1901">
+                    		</td>
+							<td width="8%" align="right">
+								<table cellpadding="0" cellspacing="0" border="0" width="100%">
+									<tbody>
+										<tr>
+											<td width="50%" align="center" class="super normal button disable_now" style="display: table-cell; border-right: none; border-top-right-radius: 0px; border-bottom-right-radius: 0px;">❮</td>
+											<td width="50%" align="center" class="super normal_page_right button" style="display: table-cell; border-top-left-radius: 0px; border-bottom-left-radius: 0px;" title="下一页">❯</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<!--列表-->
 			<div v-for="(item, index) in articleList" class="cell item" style="">
 				<table cellpadding="0" cellspacing="0" border="0" width="100%">
 					<tbody>
@@ -59,45 +102,38 @@
 		getArticle,
 	} from '@/api/article.js'
 	import {
-		getCategory,
+		categoryDetail,
 	} from '@/api/category.js'
 	export default {
 		components: {},
 		data() {
 			return {
 				articleList: [],
-				all_category: [], 
-				category_list_first: [], //一级菜单
-				category_list_second: [], //二级
-				
-				//				imgUrl: api.IMGURL,
+				meta: {},
 				nav: path.currentPath,
 				query: {
 					page: 1,
-					page_size: 20,
+					page_size: 4,
 					category_id: '',
 					status: 1,
 					keyword: '',
 				},
-				queryCategery: {
-					page: 1,
-					page_size: 10,
-					id: '',
-					status: 1,
-					name: '',
-				},
+				page_input_value: 1,
+				category_detail: {},
 			};
 		},
 		created() {
-			this.getData();
-			let cur_category_id = this.$route.query.tab;
-			if(cur_category_id) {
-				this.query.category_id = cur_category_id;
+			//取类别参数
+			let category_id = this.$route.params.category_id;
+			if(category_id) {
+				this.query.category_id = category_id;
 			}
+			console.log('category_id', category_id)
+			this.getData();
+			this.categoryDetailFun();
 		},
 		mounted() {
 			document.title = "时刻点官网";
-
 			this.nav = [];
 			var index = {
 				path: "/index",
@@ -109,35 +145,9 @@
 		},
 		methods: {
 			async getData() {
-				await this.getCategoryFun()
 				await this.getArticleFun()
 			},
-			
-			//类别
-			async getCategoryFun() {
-				const {
-					code,
-					error_code,
-					data,
-					msg
-				} = await getCategory(this.queryCategery)
-				if(code == 200) {
-					this.all_category = data;
-					//取一级菜单
-					this.category_list_first = data.filter(item=>item.parent_id==0);
-					
-					console.log('this.category_list_first', this.category_list_first)
-					if(!this.query.category_id) {
-						let cur_category_id = this.category_list_first[0].id;
-						console.log('this.query.category_id', this.query.category_id)
-						//二级
-						this.category_list_second = data.filter(item=>item.parent_id==cur_category_id);
-					} else {
-						this.category_list_second = data.filter(item=>item.parent_id==this.query.category_id);
-					}
-					console.log('this.category_list_second', this.category_list_second)
-				}
-			},
+			//文章列表
 			async getArticleFun() {
 				const {
 					code,
@@ -145,10 +155,39 @@
 					data,
 					msg
 				} = await getArticle(this.query)
-				console.log('data', data)
-				this.articleList = data.data;
-				if(code == 200) {}
+				if(code == 200) {
+					this.articleList = data.data;
+					this.meta = data.meta;
+					this.query.page = data.meta.current_page
+					
+				}
 			},
+			//类别详情
+			async categoryDetailFun() {
+				const {
+					code,
+					error_code,
+					data,
+					msg
+				} = await categoryDetail({id: this.query.category_id})
+				if(code == 200) {
+					this.category_detail = data;
+				}
+			},
+			//点击分页
+			pageClick(i) {
+				this.query.page = i;
+				this.getArticleFun();
+			},
+			openPage(path) {
+				location.href = path;
+			},
+			//分页输入数字
+			pageChange() {
+				console.log('this.page_input_value', this.page_input_value)
+				this.query.page = this.page_input_value
+				this.getArticleFun()
+			}
 		},
 
 	};
@@ -162,10 +201,75 @@
 		border-bottom: 1px solid var(--box-border-color);
 	}
 	
-	#Tabs {
-		background-color: var(--box-background-color);
-		border-top-left-radius: 3px;
-		border-top-right-radius: 3px;
+	.box-title {
+		margin-bottom: 20px;
+	}
+	
+	.node-header>.page-content-header {
+		background-color: #001D25;
+	}
+	
+	.node-header>.page-content-header {
+		background-color: #001d25;
+		color: #fff;
+		text-align: left;
+		align-items: stretch;
+		border-top-left-radius: var(--box-border-radius);
+		border-top-right-radius: var(--box-border-radius);
+	}
+	
+	.node-header>.page-content-header .title {
+		display: flex;
+		justify-content: space-between;
+		margin: 0 0 10px;
+	}
+	
+	.cell.page-content-header {
+		display: flex;
+		align-items: center;
+	}
+	
+	.cell.page-content-header>:last-child {
+		margin: 0;
+		padding: 0;
+		flex: 1 1 100%;
+	}
+	
+	.node-breadcrumb {
+		font-size: 15px;
+	}
+	
+	.node-header>.page-content-header .topic-count {
+		font-size: 12px;
+		padding-right: 5px;
+	}
+	
+	.cell.page-content-header>img {
+		width: 64px;
+		height: 64px;
+		margin: 0 10px 0 0;
+	}
+	
+	.node-header>.page-content-header a {
+		color: #03C8FF;
+	}
+	
+	.cell-translucent:last-child,
+	.cell:last-child,
+	.cell_ops:last-child {
+		border-bottom: none;
+		border-bottom-left-radius: var(--box-border-radius);
+		border-bottom-right-radius: var(--box-border-radius);
+	}
+	
+	.cell_ops {
+		padding: 10px;
+		font-size: 12px;
+		line-height: 120%;
+		text-align: left;
+		border-bottom: 1px solid var(--box-border-color);
+		background-color: #f9f9f9;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, .05) inset;
 	}
 	
 	.article {
@@ -234,13 +338,14 @@
 		background-position: 0 bottom;
 		background-repeat: repeat-x;
 	}
-	/*.cell {
+	
+	.cell {
 		padding: 10px;
 		font-size: 14px;
 		line-height: 150%;
 		text-align: left;
 		border-bottom: 1px solid var(--box-border-color);
-	}*/
+	}
 	
 	.item_title {
 		font-size: 16px;

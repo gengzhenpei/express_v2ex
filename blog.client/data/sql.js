@@ -168,3 +168,69 @@ ON `comments`.
 ORDER BY `article`.
 `created_at`
 DESC;
+
+文章列表分页
+
+SELECT `article`.*, `User`.
+`id`
+AS `User.id`, `User`.
+`name`
+AS `User.name`, `User`.
+`email`
+AS `User.email`, `Category`.
+`id`
+AS `Category.id`, `Category`.
+`name`
+AS `Category.name`, `comments`.
+`id`
+AS `comments.id`, `comments`.
+`content`
+AS `comments.content`, `comments->User`.
+`id`
+AS `comments.User.id`, `comments->User`.
+`name`
+AS `comments.User.name`
+FROM(SELECT `article`.
+	`id`, `article`.
+	`user_id`, `article`.
+	`category_id`, `article`.
+	`title`, `article`.
+	`description`, `article`.
+	`img_url`, `article`.
+	`content`, `article`.
+	`seo_keyword`, `article`.
+	`status`, `article`.
+	`sort_order`, `article`.
+	`browse`, `article`.
+	`favorite_num`, `article`.
+	`created_at`
+	FROM `articles`
+	AS `article`
+	WHERE `article`.
+	`category_id` = '18'
+	ORDER BY `article`.
+	`created_at`
+	DESC LIMIT 0, 4) AS `article`
+LEFT OUTER JOIN `Users`
+AS `User`
+ON `article`.
+`user_id` = `User`.
+`id`
+LEFT OUTER JOIN `Categories`
+AS `Category`
+ON `article`.
+`category_id` = `Category`.
+`id`
+LEFT OUTER JOIN `comments`
+AS `comments`
+ON `article`.
+`id` = `comments`.
+`article_id`
+LEFT OUTER JOIN `Users`
+AS `comments->User`
+ON `comments`.
+`user_id` = `comments->User`.
+`id`
+ORDER BY `article`.
+`created_at`
+DESC;

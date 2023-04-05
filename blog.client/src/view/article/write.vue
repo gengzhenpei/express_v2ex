@@ -170,6 +170,11 @@
 //			this.onEditorFocus();
 		},
 		created() {
+			let category_id = this.$route.query.node;
+			console.log('category_id', category_id)
+			if(category_id){
+				this.form.category_id = category_id
+			}
 			this.getCategory();
 		},
 		methods: {

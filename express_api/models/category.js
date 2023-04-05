@@ -16,6 +16,16 @@ const Category = sequelize.define('Category', {
     allowNull: false,
     comment: '分类名称'
   },
+  name_en: {
+    type: Sequelize.STRING(50),
+    allowNull: false,
+    comment: '分类名称_英文 用做动态路由'
+  },
+  subtitle: {
+    type: Sequelize.STRING(255),
+    allowNull: true,
+    comment: '副标题'
+  },
   status: {
     type: Sequelize.TINYINT,
     allowNull: true,
