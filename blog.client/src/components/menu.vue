@@ -2,7 +2,7 @@
 <template>
 	<div class="">
 		<div class="sep20"></div>
-		<template v-if="userInfo&&userInfo.id">
+		<template v-if="user_info&&user_info.id">
 			<div class="box">
 				<div class="cell">
 					<table cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -87,7 +87,7 @@
 				</div>
 			</div>
 		</template>
-		<template v-if="!userInfo||!userInfo.id">
+		<template v-if="!user_info||!user_info.id">
 			<!--注册-->
 			<template v-if="(routeObj.name=='signup')||(routeObj.name=='index')">
 				<div class="box">
@@ -125,19 +125,26 @@
 	import {
 		socialLogin
 	} from '@/api/auth.js'
+	import { mapState } from 'vuex'
 	export default {
 		data() {
 			return {
-				userInfo: {},
 				YOUR_CLIENT_ID: '161890764324-viq03rs8hiqsc4v7gv4lbmh2slk23kfr.apps.googleusercontent.com',
 				YOUR_REDIRECT_URI: 'http://localhost:8083',
 			};
 		},
+		computed: {
+			...mapState({
+				user_info: (state) => {
+					if(state.userInfo) {
+						return JSON.parse(state.userInfo)
+					} else {
+						return {}
+					}
+				}
+			})
+		},
 		mounted() {
-			let user_info = localStorage.getItem('user_info')
-			if(user_info) {
-				this.userInfo = JSON.parse(user_info)
-			}
 			//google登录
 			//提取#后面的部分
 			var fragmentString = location.hash.substring(1);

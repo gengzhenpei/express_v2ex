@@ -14,7 +14,7 @@
 					<div class="tools">
 						<a href="/" class="top">首页</a>
 						<template v-if="user_info.id">
-							<a href="/member/gengzhenpei" class="top">{{user_info.username}}</a>
+							<a href="/member/gengzhenpei" class="top">{{user_info.name}}</a>
 							<a href="/notes" class="top">记事本</a>
 							<a href="/t" class="top">时间轴</a>
 							<a href="/settings" class="top">设置</a>
@@ -87,13 +87,14 @@
 <script>
 	import breadcrumbNav from "../components/breadcrumb-nav.vue";
 	import Vmenu from "@/components/menu";
+	import { mapState } from 'vuex'
 	export default {
 		components: {
 			Vmenu,
 		},
 		data() {
 			return {
-				user_info: {},
+//				user_info: {},
 				ss: true,
 				widHeigth: "min-height: 600px",
 				keyword: "",
@@ -101,8 +102,19 @@
 				no_rightmenu_route_list: ['login', 'register'],
 			};
 		},
+		computed: {
+			...mapState({
+				user_info: (state) => {
+					if(state.userInfo) {
+						return JSON.parse(state.userInfo)
+					} else {
+						return {}
+					}
+				}
+			})
+		},
 		created() {
-			this.initUserInfo()
+//			this.initUserInfo()
 			console.log('user_info', this.user_info)
 		},
 		mounted() {
@@ -111,13 +123,13 @@
 			this.widHeigth = "min-height:" + (window.innerHeight - 202) + "px"; //滚动的长度
 
 		},
-		watch: {
-			$route: (to, from) => {
-				if(from.name == 'signin') {
-					this.initUserInfo()
-				}
-			}
-		},
+//		watch: {
+//			$route: (to, from) => {
+//				if(from.name == 'signin') {
+//					this.initUserInfo()
+//				}
+//			}
+//		},
 		methods: {
 			initUserInfo() {
 				let user_info = localStorage.getItem('user_info')
@@ -177,6 +189,10 @@
 		padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
 		text-align: center;
 		/*background-color: #e2e2e2;*/
+	}
+	#Wrapper .content {
+		min-height: 540px;
+		position: relative;
 	}
 	
 	#Top {

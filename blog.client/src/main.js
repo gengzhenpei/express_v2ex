@@ -8,7 +8,7 @@ import './static/css/base.css'
 import VueLazyLoad from 'vue-lazyload'
 import { money } from './filter/moneyFilter.js'
 import mixins from '@/utils/mixins.js'
-
+import store from './store/store'
 //import './components/comjs/amfeFlexible.js'
 // import './components/comjs/baiduZhanzhang.js'
 //import 'amfe-flexible'
@@ -34,5 +34,6 @@ Vue.config.productionTip = false
 new Vue({
 	el: '#app',
 	router,
-	render: h => h(App)
+	render: h => h(App),
+	store,
 })

@@ -30,30 +30,7 @@ export default new Router({
 				{
 					path: '/write',
 					component: resolve => require(['../view/article/write.vue'], resolve),
-					/*beforeEnter:(to,from,next) => {
-						console.log(to)
-							console.log("=======上是to下是from==========")
-						console.log(from)
-						/ next({path:'/index'})/可以执行  里面有trun  false打不开   可执行和不
-						/执行路径  还可以匿名函数
-					}*/
 				}, 
-//				{
-//					path: '/tools',
-//					component: resolve => require(['../view/article/tools.vue'], resolve)
-//				}, 
-//				{
-//					path: '/history',
-//					component: resolve => require(['../view/article/history.vue'], resolve)
-//				}, 
-//				{
-//					path: '/regular',
-//					component: resolve => require(['../view/test/regular.vue'], resolve)
-//				}, 
-//				{
-//					path: '/search',
-//					component: resolve => require(['../view/search/search.vue'], resolve)
-//				},
 				{
 					path: '/signin',
 					name: 'signin',
@@ -81,6 +58,7 @@ export default new Router({
 				}, 
 				{
 					path: '/404',
+					name: 'NoFound',
 					component: resolve => require(['../error/404.vue'], resolve)
 				},
 			]

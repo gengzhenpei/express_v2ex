@@ -109,8 +109,9 @@
 					let token = data.token;
 					localStorage.setItem('token', token)
 					let user_info = data.user;
-					localStorage.setItem('user_info', JSON.stringify(user_info))
-
+//					localStorage.setItem('user_info', JSON.stringify(user_info))
+					//用户信息 存在vuex中 
+					this.$store.commit('storeUserInfo', JSON.stringify(user_info))
 					//					window.location.href = '/'
 					this.$router.push({
 						path: '/'

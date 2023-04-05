@@ -33,7 +33,7 @@ exports.login = async (req, res) => {
 		// 验证密码是否正确
 		const correct = bcrypt.compareSync(password, user.password);
 		if (!correct) {
-			res.json(resolve.failAuth());
+			res.json(resolve.failAuth('密码错误'));
 		}
 		const tokenStr = jwt.sign({id: user.id, name: user.name }, secretKey, { expiresIn: '30h' })
 		const data = {
