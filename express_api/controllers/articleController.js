@@ -22,7 +22,20 @@ exports.ArticlesList = async (req, res) => {
 		};
 		// 筛选方式：存在分类ID
 		if (category_id) {
-			filter.category_id = category_id;
+			//查询子类
+			const childCategory = await Category.findAll({
+				where: {
+					parent_id: category_id
+				}
+			})
+			console.log('childCategory', childCategory)
+			if(childCategory.length) {
+				let c_arr = childCategory.map(i=>{return i.id});
+				console.log('c_arr', c_arr);
+				filter.category_id = c_arr;
+			} else {
+				filter.category_id = category_id;
+			}
 		}
 		const articles = await Article.findAndCountAll({
 			limit: Number(page_size), //每页10条
