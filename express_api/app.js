@@ -36,7 +36,7 @@ app.use(bodyParser.json());
 // 静态文件中间件
 app.use(express.static('public'));
 // 配置express-jwt 可通过 req.auth 获取token信息
-app.use(expressJWT.expressjwt({ secret: config.secretKey, algorithms: ["HS256"] }).unless({ path: ['/api/user/login', '/api/category/getCategory','/api/user/createUser'] }))
+app.use(expressJWT.expressjwt({ secret: config.secretKey, algorithms: ["HS256"] }).unless({ path: config.whiteList }))
 
 // 注册路由
 app.use('/api', routes);

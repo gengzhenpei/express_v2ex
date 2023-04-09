@@ -42,15 +42,9 @@
 				</div>-->
 				<div class="cell" style="display: flex; align-items: center;">
 					<div style="margin-right: 5px;">主题节点</div>
-					<select v-model="form.category_id" class="">
-						<option v-for="(item,index) in category_list" :key="index" :value="item.id">{{item.name}}</option>
-					</select>
-					<!--<span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-1-j2g8" style="width: 320px;">
-						<span class="selection">
-							<span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-nodes-container" aria-controls="select2-nodes-container">
-								<span class="select2-selection__rendered" id="select2-nodes-container" role="textbox" aria-readonly="true" title="请选择一个节点">
-							<span class="select2-selection__placeholder">请选择一个节点</span>
-					</span>-->
+					<div class="">
+						<el-cascader v-model="form.category_id" :options="cascade_category"  :props="{'value': 'id', label: 'name'}" size="mini"></el-cascader>
+					</div>
 					<div style="margin-left: auto;">
 						<a href="/help/node" target="_blank">V2EX 节点使用说明</a> <i class="fa fa-external-link gray"></i>
 					</div>
@@ -83,62 +77,6 @@
 		data() {
 			return {
 				content: "",
-				options: {
-					theme: 'snow',
-					indexCursor: null,
-					lengthCursor: null,
-					quill: null,
-
-					modules: {
-						toolbar: [
-							["bold", "italic", "underline", "strike"], // 加粗 斜体 下划线 删除线
-							["blockquote", "code-block"], // 引用  代码块
-							[{
-								header: 1
-							}, {
-								header: 2
-							}], // 1、2 级标题
-							[{
-								list: "ordered"
-							}, {
-								list: "bullet"
-							}], // 有序、无序列表
-							[{
-								script: "sub"
-							}, {
-								script: "super"
-							}], // 上标/下标
-							[{
-								indent: "-1"
-							}, {
-								indent: "+1"
-							}], // 缩进
-							[{
-								'direction': 'rtl'
-							}], // 文本方向
-							[{
-								size: ["small", false, "large", "huge"]
-							}], // 字体大小
-							[{
-								header: [1, 2, 3, 4, 5, 6, false]
-							}], // 标题
-							[{
-								color: []
-							}, {
-								background: []
-							}], // 字体颜色、字体背景颜色
-							[{
-								font: []
-							}], // 字体种类
-							[{
-								align: []
-							}], // 对齐方式
-							["clean"], // 清除文本格式
-							["link", "image", "video"] // 链接、图片、视频
-						], //工具菜单栏配置
-					},
-					placeholder: '请输入内容'
-				},
 				classify: "",
 				imgUrl: "",
 				showContent: false,
@@ -163,16 +101,16 @@
 					}, ],
 				},
 				category_list: [],
+				cascade_category: [],
 			};
 		},
 		mounted() {
 			var self = this;
-//			this.onEditorFocus();
 		},
 		created() {
 			let category_id = this.$route.query.node;
 			console.log('category_id', category_id)
-			if(category_id){
+			if(category_id) {
 				this.form.category_id = category_id
 			}
 			this.getCategory();
@@ -209,9 +147,23 @@
 				} = await getCategory()
 				if(code == 200) {
 					this.category_list = data
-					console.log('this.category_list', this.category_list)
-				} else {
-					console.log("服务器异常");
+					data.forEach(item => {
+						if(item.parent_id == 0) {
+							this.cascade_category.push(item);
+						}
+					})
+					this.cascade_category.forEach(item => {
+						item.children = []
+						data.forEach(i => {
+							if(item.id == i.parent_id) {
+								item.children.push(i);
+							}
+						})
+						if(!item.children.length){
+							item.children = null;
+						}
+					})
+					console.log('cascade_category', this.cascade_category)
 				}
 			},
 			handleSuccess(res, file) {
@@ -239,43 +191,12 @@
 			publishTopic(name) {
 				this.addArticleFun()
 			},
-			handleSearch2(value) {
-				this.data2 = !value || value.indexOf("@") >= 0 ? [] : [
-					value + "@qq.com",
-					value + "@163.com",
-					value + "@126.com",
-					value + "@sina.com",
-					value + "@gemail.com",
-				];
-			},
-			handleClose(event, name) {
-				let index = this.form.classify.indexOf(name);
-				this.form.classify.splice(index, 1);
-			},
-			onEditorFocus() {
-				let dom = this.$el.querySelector('.editor')
-				this.quill = new Quill(dom, this.options);
-				//文本框内默认内容可解析HTML详情看官网
-				this.quill.clipboard.dangerouslyPasteHTML(0, this.value);
-
-				this.quill.on('selection-change', () => {
-					//我的理解为光标每落在编辑器上将执行
-					if(this.quill.getSelection()) {
-						const {
-							index,
-							length
-						} = this.quill.getSelection();
-						Object.assign(this, {
-							indexCursor: index, //字符在编辑器的下标
-							lengthCursor: length //选中的字符长度
-						})
-					}
-
-				})
-			},
-			//替换操作 
-			onchange(int) {}
-
+			oneSelect() {
+				console.log('form.category_id', this.form.category_id)
+				if(this.first_select_value) {
+					this.two_select_show = true;
+				}
+			}
 		},
 
 	};

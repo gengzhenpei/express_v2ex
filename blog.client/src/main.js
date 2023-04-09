@@ -9,9 +9,12 @@ import VueLazyLoad from 'vue-lazyload'
 import { money } from './filter/moneyFilter.js'
 import mixins from '@/utils/mixins.js'
 import store from './store/store'
-//import './components/comjs/amfeFlexible.js'
-// import './components/comjs/baiduZhanzhang.js'
-//import 'amfe-flexible'
+
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
+Vue.use(ElementUI);
+
 Vue.mixin(mixins)
 
 Vue.use(iView)
