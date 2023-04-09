@@ -23,6 +23,8 @@ router.put('/users/:id', UserController.updateUser);
 // 删除用户
 router.delete('/users/:id', UserController.deleteUser);
 
+// 获取验证码
+router.post('/captcha', UserController.captcha);
 
 module.exports = router;
 

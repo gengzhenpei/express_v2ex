@@ -23,7 +23,7 @@ export function login(data) {
 export function getcaptcha() {
 	return request({
     url: '/user/captcha',
-    method: 'get',
+    method: 'post',
   })
 }
 

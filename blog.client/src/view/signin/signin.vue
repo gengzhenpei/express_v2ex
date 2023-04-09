@@ -4,10 +4,11 @@
 		<div class="box">
 			<div class="header">
 				<a href="/">V2EX</a> <span class="chevron">&nbsp;›&nbsp;</span> 登录 &nbsp;
-				<li class="fa fa-lock"></li>
+				<!--<li class="fa fa-lock"></li>-->
 			</div>
 			<div class="message" onclick="$(this).slideUp('fast');">
-				<li class="fa fa-exclamation-triangle"></li>&nbsp; 你要查看的页面需要先登录
+				<!--<li class="fa fa-exclamation-triangle"></li>&nbsp; 你要查看的页面需要先登录-->
+				&nbsp; 你要查看的页面需要先登录
 			</div>
 			<div class="cell">
 				<form>
@@ -101,7 +102,7 @@
 			async loginFun() {
 				const {
 					code,
-					errorCode,
+					err,
 					data,
 					msg
 				} = await login(this.form)
@@ -117,7 +118,7 @@
 						path: '/'
 					})
 				} else {
-					this.err_msg = msg;
+					this.err_msg = err;
 				}
 			},
 			//google登录

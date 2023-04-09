@@ -1,6 +1,6 @@
 // article.js
 const Sequelize = require('sequelize');
-const sequelize = require('../database');
+const {sequelize} = require('../database');
 const moment = require('moment');
 const User = require('./user');
 const Category = require('./category');

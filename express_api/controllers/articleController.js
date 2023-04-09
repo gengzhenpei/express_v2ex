@@ -22,7 +22,20 @@ exports.ArticlesList = async (req, res) => {
 		};
 		// 筛选方式：存在分类ID
 		if (category_id) {
-			filter.category_id = category_id;
+			//查询子类
+			const childCategory = await Category.findAll({
+				where: {
+					parent_id: category_id
+				}
+			})
+			console.log('childCategory', childCategory)
+			if(childCategory.length) {
+				let c_arr = childCategory.map(i=>{return i.id});
+				console.log('c_arr', c_arr);
+				filter.category_id = c_arr;
+			} else {
+				filter.category_id = category_id;
+			}
 		}
 		const articles = await Article.findAndCountAll({
 			limit: Number(page_size), //每页10条
@@ -107,10 +120,9 @@ exports.getAllArticles = async (req, res) => {
 
 exports.createArticle = async (req, res) => {
 	req.body.user_id = req.auth.id;
-	console.log('req.body', req.body)
 	const { error, value } = Schema.validate(req.body);
 	if (error) {
-		res.status(400).json({ error: error.details[0].message });
+		res.json(resolve.fail(error.details[0].message));
 	} else {
 		try {
 
@@ -118,9 +130,8 @@ exports.createArticle = async (req, res) => {
 			await article.save();
 			res.json(resolve.json(article));
 		} catch (error) {
-			res.status(400).json({
-				message: error.message
-			});
+			console.log('error', error)
+			res.json(resolve.fail(error));
 		}
 	}
 };

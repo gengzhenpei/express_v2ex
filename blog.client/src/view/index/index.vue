@@ -126,16 +126,13 @@
 					//取一级菜单
 					this.category_list_first = data.filter(item=>item.parent_id==0);
 					
-					console.log('this.category_list_first', this.category_list_first)
 					if(!this.query.category_id) {
 						let cur_category_id = this.category_list_first[0].id;
-						console.log('this.query.category_id', this.query.category_id)
 						//二级
 						this.category_list_second = data.filter(item=>item.parent_id==cur_category_id);
 					} else {
 						this.category_list_second = data.filter(item=>item.parent_id==this.query.category_id);
 					}
-					console.log('this.category_list_second', this.category_list_second)
 				}
 			},
 			async getArticleFun() {
@@ -145,7 +142,6 @@
 					data,
 					msg
 				} = await getArticle(this.query)
-				console.log('data', data)
 				this.articleList = data.data;
 				if(code == 200) {}
 			},

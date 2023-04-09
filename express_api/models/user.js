@@ -1,6 +1,6 @@
 // 引入 Sequelize 库
 const Sequelize = require('sequelize');
-const sequelize = require('../database');
+const {sequelize} = require('../database');
 const bcrypt = require('bcryptjs')
 // const Post = require('./post')
 // User 模型

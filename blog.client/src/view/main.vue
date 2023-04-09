@@ -115,7 +115,6 @@
 		},
 		created() {
 //			this.initUserInfo()
-			console.log('user_info', this.user_info)
 		},
 		mounted() {
 			this.routeName = this.$route.name
@@ -123,13 +122,6 @@
 			this.widHeigth = "min-height:" + (window.innerHeight - 202) + "px"; //滚动的长度
 
 		},
-//		watch: {
-//			$route: (to, from) => {
-//				if(from.name == 'signin') {
-//					this.initUserInfo()
-//				}
-//			}
-//		},
 		methods: {
 			initUserInfo() {
 				let user_info = localStorage.getItem('user_info')
