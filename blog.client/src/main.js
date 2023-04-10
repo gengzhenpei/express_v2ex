@@ -12,7 +12,15 @@ import store from './store/store'
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import markDown from 'zyf-markdown'
+// 富文本编辑器
+import VueQuillEditor from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+Vue.use(VueQuillEditor);
 
+Vue.use(markDown)
 Vue.use(ElementUI);
 
 Vue.mixin(mixins)

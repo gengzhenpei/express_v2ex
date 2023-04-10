@@ -120,10 +120,9 @@ exports.getAllArticles = async (req, res) => {
 
 exports.createArticle = async (req, res) => {
 	req.body.user_id = req.auth.id;
-	console.log('req.body', req.body)
 	const { error, value } = Schema.validate(req.body);
 	if (error) {
-		res.status(400).json({ error: error.details[0].message });
+		res.json(resolve.fail(error.details[0].message));
 	} else {
 		try {
 
@@ -131,9 +130,8 @@ exports.createArticle = async (req, res) => {
 			await article.save();
 			res.json(resolve.json(article));
 		} catch (error) {
-			res.status(400).json({
-				message: error.message
-			});
+			console.log('error', error)
+			res.json(resolve.fail(error));
 		}
 	}
 };

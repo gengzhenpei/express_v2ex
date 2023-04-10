@@ -16,14 +16,14 @@
 				</div>
 				<div class="cell flex-one-row" style="padding-bottom: 0; padding-top: 0;">
 					<div class="tab-alt-container flex-one-row">
-						<a class="tab-alt active" href="javascript:continueToWrite()" id="tab-write">正文</a>
-						<a class="tab-alt" href="javascript:previewInPage()" id="tab-preview">预览</a>
+						<!--<a class="tab-alt active" href="javascript:continueToWrite()" id="tab-write">正文</a>
+						<a class="tab-alt" href="javascript:previewInPage()" id="tab-preview">预览</a>-->
 					</div>
 					<div id="syntax-selector">
 						<div id="syntax-label">Syntax</div>
 						<div class="radio-group">
-							<input type="radio" id="syntax-default" name="syntax" value="default"><label for="syntax-default">V2EX 原生格式</label>
-							<input type="radio" id="syntax-markdown" name="syntax" value="markdown" checked=""><label for="syntax-markdown">Markdown</label>
+							<input v-model='edit_method' type="radio" id="syntax-default" name="syntax" :value="1"><label for="syntax-default">V2EX 原生格式</label>
+							<input v-model='edit_method' type="radio" id="syntax-markdown" name="syntax" :value="2" checked=""><label for="syntax-markdown">Markdown</label>
 						</div>
 						<div id="syntax-help">
 							&nbsp;
@@ -31,31 +31,32 @@
 						</div>
 					</div>
 				</div>
-				<div class="cell" id="preview" style="display: none;">
-					<div class="topic_content markdown_body">
-						<p>发的啥地方</p>
+				<template>
+					<div class="example-wrap">
+						<template v-if="edit_method==1">
+							<!-- 新建日记 -->
+							<div class="notes" style="height: 400px;">
+								<quill-editor class="editor" ref="myTextEditor" v-model="content" :options="editorOption" style="height: 300px;">
+								</quill-editor>
+							</div>
+						</template>
+						<template v-if="edit_method==2">
+							<mavonEditor :toolbars="markdownOption" @change="mavonChange" ref="md" />
+						</template>
 					</div>
-				</div>
-				<textarea v-model="content" style="" row="10" maxlength="20000" id="editor" name="content"></textarea>
-				<!--<div id="workspace" style="height: 200px;">
-					<div class="editor"></div>
-				</div>-->
+				</template>
 				<div class="cell" style="display: flex; align-items: center;">
 					<div style="margin-right: 5px;">主题节点</div>
 					<div class="">
-						<el-cascader v-model="form.category_id" :options="cascade_category"  :props="{'value': 'id', label: 'name'}" size="mini"></el-cascader>
+						<el-cascader v-model="form.category_id" @change="cascaderHandler" :options="cascade_category" :props="{'value': 'id', label: 'name'}" size="mini"></el-cascader>
 					</div>
 					<div style="margin-left: auto;">
 						<a href="/help/node" target="_blank">V2EX 节点使用说明</a> <i class="fa fa-external-link gray"></i>
 					</div>
 				</div>
-				<!--<input type="hidden" name="content" value="" id="topic_content">
-				<input type="hidden" name="once" id="once" value="75751">-->
 			</form>
 			<div class="cell flex-one-row">
-				<button @click="publishTopic()" type="button" class="super normal button">
-			<li class="fa fa-paper-plane"></li> &nbsp;发布主题
-		</button>
+				<button @click="publishTopic()" type="button" class="super normal button">&nbsp;发布主题</button>
 				<span id="error_message"></span>
 			</div>
 		</div>
@@ -73,7 +74,15 @@
 	import {
 		getCategory,
 	} from '@/api/category.js'
+
+	import VueMarkdown from 'vue-markdown'
+	import { mavonEditor } from 'mavon-editor'
+	import 'mavon-editor/dist/css/index.css'
 	export default {
+		// 2. 注册组件：在组件中注册 vue-markdown 组件，代码如下
+		components: {
+			mavonEditor
+		},
 		data() {
 			return {
 				content: "",
@@ -86,7 +95,7 @@
 					title: "",
 					email: "",
 					classify: [],
-					category_id: '',
+					category_id: [],
 				},
 				ruleValidate: {
 					title: [{
@@ -102,18 +111,112 @@
 				},
 				category_list: [],
 				cascade_category: [],
+				edit_method: 1, //v2ex 原生模式、2：markdown模式
+				editorOption: {
+					modules: {
+						toolbar: [
+							["bold", "italic", "underline", "strike"], // 加粗 斜体 下划线 删除线
+							["blockquote", "code-block"], // 引用  代码块
+							[{
+								header: 1
+							}, {
+								header: 2
+							}], // 1、2 级标题
+							[{
+								list: "ordered"
+							}, {
+								list: "bullet"
+							}], // 有序、无序列表
+							[{
+								script: "sub"
+							}, {
+								script: "super"
+							}], // 上标/下标
+							[{
+								indent: "-1"
+							}, {
+								indent: "+1"
+							}], // 缩进
+							// [{'direction': 'rtl'}],                         // 文本方向
+							[{
+								size: ["small", false, "large", "huge"]
+							}], // 字体大小
+							[{
+								header: [1, 2, 3, 4, 5, 6, false]
+							}], // 标题
+							[{
+								color: []
+							}, {
+								background: []
+							}], // 字体颜色、字体背景颜色
+							[{
+								font: []
+							}], // 字体种类
+							[{
+								align: []
+							}], // 对齐方式
+							["clean"], // 清除文本格式
+							["link", "image", "video"] // 链接、图片、视频
+						], //工具菜单栏配置
+					},
+					placeholder: '请在这里添加产品描述', //提示
+					readyOnly: false, //是否只读
+					theme: 'snow', //主题 snow/bubble
+					syntax: true, //语法检测
+				},
+				markdownOption: {
+					bold: true, // 粗体
+					italic: true, // 斜体
+					header: true, // 标题
+					underline: true, // 下划线
+					strikethrough: true, // 中划线
+					mark: true, // 标记
+					superscript: true, // 上角标
+					subscript: true, // 下角标
+					quote: true, // 引用
+					ol: true, // 有序列表
+					ul: true, // 无序列表
+					link: true, // 链接
+					imagelink: true, // 图片链接
+					code: true, // code
+					table: true, // 表格
+					fullscreen: true, // 全屏编辑
+					readmodel: true, // 沉浸式阅读
+					htmlcode: true, // 展示html源码
+					help: true, // 帮助
+					/* 1.3.5 */
+					undo: true, // 上一步
+					redo: true, // 下一步
+					trash: true, // 清空
+					save: true, // 保存（触发events中的save事件）
+					/* 1.4.2 */
+					navigation: true, // 导航目录
+					/* 2.1.8 */
+					alignleft: true, // 左对齐
+					aligncenter: true, // 居中
+					alignright: true, // 右对齐
+					/* 2.2.1 */
+					subfield: true, // 单双栏模式
+					preview: true, // 预览
+				},
+
 			};
 		},
-		mounted() {
-			var self = this;
-		},
-		created() {
+		async created() {
+			await this.getCategory();
 			let category_id = this.$route.query.node;
-			console.log('category_id', category_id)
 			if(category_id) {
-				this.form.category_id = category_id
+				this.form.category_id.push(Number(category_id))
+				//取父节点
+				this.category_list.forEach(item => {
+					if(item.id == category_id) {
+						if(item.parent_id) {
+							let p_id = item.parent_id
+							this.form.category_id.unshift(Number(p_id))
+						}
+					}
+				})
 			}
-			this.getCategory();
 		},
 		methods: {
 			async addArticleFun() {
@@ -121,11 +224,12 @@
 				const {
 					data,
 					code,
-					msg
+					msg,
+					err
 				} = await addArticle({
 					title: this.form.title,
 					content: this.content,
-					category_id: this.form.category_id || 1,
+					category_id: this.form.category_id,
 				})
 				if(code == 200) {
 					var url = "/article/" + data.id;
@@ -135,6 +239,7 @@
 						desc: "感谢你的支持",
 					});
 				} else {
+					this.$message.error(err);
 					console.log("服务器异常");
 				}
 			},
@@ -159,7 +264,7 @@
 								item.children.push(i);
 							}
 						})
-						if(!item.children.length){
+						if(!item.children.length) {
 							item.children = null;
 						}
 					})
@@ -196,6 +301,31 @@
 				if(this.first_select_value) {
 					this.two_select_show = true;
 				}
+			},
+			// 上传图片
+			uploadImage(e) {
+				console.log(e, e.name)
+				//这儿写自己的上传方法，e是markdown返回给你的file对象
+				const formData = new FormData()
+				formData.append('file', e)
+				axios({
+					url: '上传图片的地址',
+					method: 'post',
+					data: formData,
+				}).then(res => {
+					console.log('res=>', res);
+					// imgUrlAdd 有两个参数imgUrlAdd(url, name)
+					this.$refs.MarkDown.imgUrlAdd('url: 这儿写url->res.url', e.name)
+				}).catch(() => {})
+			},
+			getImgUrl(e) {
+				// 获取到点击图片的url
+			},
+			cascaderHandler(selected_val) {
+				this.form.category_id = selected_val[1];
+			},
+			mavonChange() {
+				this.content = this.$refs.md.d_render;
 			}
 		},
 

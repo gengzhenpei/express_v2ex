@@ -4,13 +4,13 @@ import { Base64 } from 'js-base64'
 //import {
 //baseURL,
 //} from '@/config'
-//import { Message, MessageBox, Notification } from 'element-ui'
+import { Message, MessageBox, Notification } from 'element-ui'
 //import store from '../store'
 //import { getToken } from '@/utils/auth'
 
 // 创建axios实例
 const service = axios.create({
-//	baseURL: 'http://localhost:5000/api/v1', // api的base_url
+	//	baseURL: 'http://localhost:5000/api/v1', // api的base_url
 	baseURL: 'http://localhost:3000/api', // api的base_url
 	timeout: 15000, // 请求超时时间
 	headers: {
@@ -37,7 +37,7 @@ service.interceptors.request.use(
 		// 不规范写法 可根据setting.config.js tokenName配置随意自定义headers
 		// if (token) config.headers[tokenName] = token
 		const token = localStorage.getItem('token');
-//		const base64 = Base64.encode(`${token}:`)
+		//		const base64 = Base64.encode(`${token}:`)
 		// 规范写法 不可随意自定义
 		if(token) config.headers['Authorization'] = `Bearer ${token}`
 
@@ -65,69 +65,33 @@ service.interceptors.request.use(
 // respone拦截器
 service.interceptors.response.use(
 	response => {
-		console.log('response', response)
 		const res = response.data
-		return response.data
-//		if(res.errorCode !== 200) {
-//			// 10002:token过期; 10003:需要携带token值;  50014:Token 过期了;
-//			if(res.errorCode === 10002 || res.errorCode === 10003 || res.code === 50014) {
-//				console.log('你已被登出，可以取消继续留在该页面，或者重新登录')
-//				setTimeout(function() {
-//					if (confirm(`${res.err}, 重新登录？`)) { location.href= '/signin'; }
-//				}, 500)
-//			}
-//			return response.data
-//		} else {
-//			return response.data
-//		}
+		//		return response.data
+		if(res.status !== 200) {
+			// 401:token过期; 10003:需要携带token值;  50014:Token 过期了;
+			if(res.status === 401) {
+				console.log('你已被登出，可以取消继续留在该页面，或者重新登录')
+				setTimeout(function() {
+					//					Message({
+					//						message: res.message,
+					//						type: 'error',
+					//						duration: 2 * 1000
+					//					})
+					if(confirm(`${res.message}, 重新登录？`)) {
+						location.href = '/signin';
+					}
+				}, 500)
+			}
+			return response.data
+		} else {
+			return response.data
+		}
 	},
 	error => {
 		console.log('err:' + error) // for debug
-//		location.href = '/login'
+		//		location.href = '/login'
 		return Promise.reject(error)
 	}
 )
-const handleData = ({
-	config,
-	data,
-	status,
-	statusText
-}) => {
-	switch(status) {
-		//修改学工号失败 状态码单独处理
-		case 9:
-			return data
-			break;
-		case 1:
-			break;
-		case 200:
-			return data
-		case 401:
-			break
-		case 403:
-			break
-	}
-	return Promise.reject(data)
-}
-/**
- * @description axios响应拦截器
- */
-//service.interceptors.response.use(
-//	(response) => {
-//		handleData(response);
-//	},
-//	(error) => {
-//		const {
-//			response
-//		} = error
-//		if(response === undefined) {
-//			Vue.prototype.$baseMessage(
-//				'未可知错误，大部分是由于后端不支持跨域CORS或无效配置引起',
-//				'error'
-//			)
-//			return {}
-//		} else return handleData(response)
-//	}
-//)
 
 export default service
