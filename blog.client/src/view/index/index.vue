@@ -7,7 +7,7 @@
 			</div>
 			<div class="cell" id="SecondaryTabs">
 				<div class="">
-					<a v-for="(item, index) in category_list_second" :key="index" :href="'/go/'+item.id">{{item.name}}&nbsp; &nbsp;</a> 
+					<a v-for="(item, index) in category_list_second" :key="index" :href="'/go/'+item.id">{{item.name}}&nbsp; &nbsp;</a>
 				</div>
 				<!--<div class="fr">
 					<a href="/new/free">我要送东西</a> &nbsp; &nbsp;
@@ -30,10 +30,17 @@
 								<div class="sep5"></div>
 								<span class="topic_info">
 										<div class="votes"></div>
-										<!--<a class="node" href="/go/create">分享创造</a> &nbsp;•&nbsp;--> 
-										<strong><a v-if="item.User" href="/member/kekeyao">{{item.User.name}}</a></strong> 
-										&nbsp;•&nbsp; <span :title="item.created_at">{{dateFormat(item.created_at)}}</span> &nbsp;•&nbsp; 最后回复来自
-								<strong><a v-if="item.comments.length" href="/member/cnsdytedison">{{item.comments[0].User.name}}</a></strong>
+										<a class="node" href="/go/create">{{item.Category.name}}</a> &nbsp;•&nbsp; 
+										<strong>
+											<a v-if="item.User" href="/member/kekeyao">{{item.User.name}}</a>
+										</strong> 
+										&nbsp;•&nbsp; <span :title="item.created_at">{{dateFormat(item.created_at)}}</span> 
+										<template v-if="item.comments.length">
+											&nbsp;•&nbsp; 最后回复来自
+											<strong>
+												<a href="/member/cnsdytedison">{{item.comments[0].User.name}}</a>
+											</strong>
+										</template>
 								</span>
 							</td>
 							<td width="70" align="right" valign="middle">
@@ -66,10 +73,10 @@
 		data() {
 			return {
 				articleList: [],
-				all_category: [], 
+				all_category: [],
 				category_list_first: [], //一级菜单
 				category_list_second: [], //二级
-				
+
 				//				imgUrl: api.IMGURL,
 				nav: path.currentPath,
 				query: {
@@ -112,7 +119,7 @@
 				await this.getCategoryFun()
 				await this.getArticleFun()
 			},
-			
+
 			//类别
 			async getCategoryFun() {
 				const {
@@ -124,16 +131,16 @@
 				if(code == 200) {
 					this.all_category = data;
 					//取一级菜单
-					this.category_list_first = data.filter(item=>item.parent_id==0);
-					
+					this.category_list_first = data.filter(item => item.parent_id == 0);
+
 					console.log('this.category_list_first', this.category_list_first)
 					if(!this.query.category_id) {
 						let cur_category_id = this.category_list_first[0].id;
 						console.log('this.query.category_id', this.query.category_id)
 						//二级
-						this.category_list_second = data.filter(item=>item.parent_id==cur_category_id);
+						this.category_list_second = data.filter(item => item.parent_id == cur_category_id);
 					} else {
-						this.category_list_second = data.filter(item=>item.parent_id==this.query.category_id);
+						this.category_list_second = data.filter(item => item.parent_id == this.query.category_id);
 					}
 					console.log('this.category_list_second', this.category_list_second)
 				}

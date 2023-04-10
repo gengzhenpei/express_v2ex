@@ -57,6 +57,11 @@ export default new Router({
 					component: resolve => require(['../view/settings/index.vue'], resolve)
 				}, 
 				{
+					path: '/settings/avatar',
+					name: 'avatar',
+					component: resolve => require(['../view/settings/avatar.vue'], resolve)
+				}, 
+				{
 					path: '/settings/email',
 					name: 'settingsEmail',
 					component: resolve => require(['../view/settings/email.vue'], resolve)
