@@ -4,7 +4,7 @@ const routes = require('./routes');
 var bodyParser = require('body-parser')
 const expressJWT = require('express-jwt')
 const config = require('./config')
-
+const path = require('path')
 // 生成秘钥/解密 需要的key
 // const secretKey = 'lihaichao'
 
@@ -34,7 +34,7 @@ app.all('*', function (req, res, next) {
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 // 静态文件中间件
-app.use(express.static('public'));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 // 配置express-jwt 可通过 req.auth 获取token信息
 app.use(expressJWT.expressjwt({ secret: config.secretKey, algorithms: ["HS256"] }).unless({ path: config.whiteList }))
 
