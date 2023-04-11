@@ -38,7 +38,9 @@
 							</tr>
 							<tr>
 								<td width="120" align="right">选择一个图片文件</td>
-								<td width="auto" align="left"><input type="file" name="avatar"></td>
+								<td width="auto" align="left">
+									<input @change="onFileChange" type="file" name="avatar">
+								</td>
 							</tr>
 							<tr>
 								<td width="120" align="right"></td>
@@ -47,7 +49,10 @@
 							</tr>
 							<tr>
 								<td width="120" align="right"></td>
-								<td width="auto" align="left"><input type="hidden" value="18729" name="once"><input type="submit" class="super normal button" value="开始上传"></td>
+								<td width="auto" align="left">
+									<input type="hidden" value="18729" name="once">
+									<input @click.prevent="uploadImage" type="submit" class="super normal button" value="开始上传">
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -60,12 +65,10 @@
 <script>
 	import dateFormat from "../../common/dateFormat";
 	import utils from "../../common/utils";
+	import axios from 'axios';
 	import {
-		getArticle,
-	} from '@/api/article.js'
-	import {
-		getCategory,
-	} from '@/api/category.js'
+		settingsAvatar,
+	} from '@/api/settings.js'
 	export default {
 		data() {
 			return {
@@ -89,7 +92,6 @@
 			};
 		},
 		created() {
-			this.getData();
 			this.cur_category_id = this.$route.query.tab;
 			if(this.cur_category_id) {
 				this.query.category_id = this.cur_category_id;
@@ -99,35 +101,31 @@
 			document.title = "时刻点官网";
 		},
 		methods: {
-			async getData() {
-				await this.getCategoryFun()
-				await this.getArticleFun()
+			onFileChange(event) {
+				this.file = event.target.files[0];
 			},
-			async getCategoryFun() {
+			async uploadImage() {
+				const formData = new FormData();
+				formData.append('image', this.file);
 				const {
 					code,
-					error_code,
+					errorCode,
 					data,
 					msg
-				} = await getCategory(this.queryCategery)
+				} = await settingsAvatar(formData)
 				if(code == 200) {
-					this.category_list = data.data;
-					if(!this.query.category_id) {
-						this.cur_category_id = data.data[0].id;
-						this.query.category_id = this.cur_category_id;
-					}
+				} else {
+					this.err_msg = msg;
 				}
-			},
-			async getArticleFun() {
-				const {
-					code,
-					error_code,
-					data,
-					msg
-				} = await getArticle(this.query)
-				if(code == 200) {
-					this.articleList = data.data;
-				}
+//				axios.post('/settings/avatar', formData, {
+//					headers: {
+//						'Content-Type': 'multipart/form-data'
+//					},
+//				}).then(response => {
+//					console.log(response.data);
+//				}).catch(error => {
+//					console.error(error);
+//				});
 			},
 		},
 
