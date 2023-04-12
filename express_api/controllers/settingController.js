@@ -20,7 +20,7 @@ exports.avatar = async (req, res) => {
 	try {
 		// 处理上传文件的逻辑
   		// req.file 包含上传的文件信息
-
+		console.log('req', req)
   		const imageUrl = `${req.protocol}://${req.get('host')}/${req.file.path}`;
 		console.log('imageUrl', imageUrl)
 		

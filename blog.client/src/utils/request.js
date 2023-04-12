@@ -47,6 +47,11 @@ service.interceptors.request.use(
 			'application/x-www-form-urlencoded;charset=UTF-8'
 		) {
 			config.data = qs.stringify(config.data);
+			console.log('config.data', config.data)
+		}
+		if(config.data && config.headers['Content-Type'] ===
+			'multipart/form-data') {
+			config.data = qs.stringify(config.data);
 		}
 		if((config.method == 'get') && config.params) {
 			//			config.params = qs.stringify(config.params);

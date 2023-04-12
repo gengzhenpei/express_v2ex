@@ -17,7 +17,7 @@
 				<a href="/settings/privacy" class="tab">隐私</a>
 			</div>
 			<div class="inner">
-				<form method="post" action="http://localhost:3000/api/settings/avatar" enctype="multipart/form-data">
+				<form method="post" enctype="multipart/form-data">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
 						<tbody>
 							<tr>
@@ -38,7 +38,7 @@
 							</tr>
 							<tr>
 								<td width="120" align="right">选择一个图片文件</td>
-								<td width="auto" align="left"><input type="file" name="avatar"></td>
+								<td width="auto" align="left"><input id="input_file" type="file" name="avatar"></td>
 							</tr>
 							<tr>
 								<td width="120" align="right"></td>
@@ -47,7 +47,10 @@
 							</tr>
 							<tr>
 								<td width="120" align="right"></td>
-								<td width="auto" align="left"><input type="hidden" value="18729" name="once"><input type="submit" class="super normal button" value="开始上传"></td>
+								<td width="auto" align="left">
+									<input type="hidden" value="18729" name="once">
+									<input @click.prevent="uploadObs" type="submit" class="super normal button" value="开始上传">
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -61,11 +64,8 @@
 	import dateFormat from "../../common/dateFormat";
 	import utils from "../../common/utils";
 	import {
-		getArticle,
-	} from '@/api/article.js'
-	import {
-		getCategory,
-	} from '@/api/category.js'
+		setAvatar,
+	} from '@/api/setting.js'
 	export default {
 		data() {
 			return {
@@ -89,44 +89,26 @@
 			};
 		},
 		created() {
-			this.getData();
-			this.cur_category_id = this.$route.query.tab;
-			if(this.cur_category_id) {
-				this.query.category_id = this.cur_category_id;
-			}
 		},
 		mounted() {
-			document.title = "时刻点官网";
 		},
 		methods: {
-			async getData() {
-				await this.getCategoryFun()
-				await this.getArticleFun()
+			uploadObs() {
+				let _file = document.getElementById('input_file').files[0];
+				console.log("_file", _file)
+				var formData = new FormData()
+				formData.append('avatar', _file)
+				this.setAvatarFun(formData);
 			},
-			async getCategoryFun() {
+			async setAvatarFun(formData) {
+				console.log('formData', formData)
 				const {
 					code,
 					error_code,
 					data,
 					msg
-				} = await getCategory(this.queryCategery)
+				} = await setAvatar(formData)
 				if(code == 200) {
-					this.category_list = data.data;
-					if(!this.query.category_id) {
-						this.cur_category_id = data.data[0].id;
-						this.query.category_id = this.cur_category_id;
-					}
-				}
-			},
-			async getArticleFun() {
-				const {
-					code,
-					error_code,
-					data,
-					msg
-				} = await getArticle(this.query)
-				if(code == 200) {
-					this.articleList = data.data;
 				}
 			},
 		},

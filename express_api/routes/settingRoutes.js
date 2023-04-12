@@ -4,7 +4,7 @@ const SettingController = require('../controllers/settingController');
 const multer = require('multer');
 const upload = multer({ dest: 'public/' });
 // 上传
-router.post('/avatar', upload.single('avatar'), SettingController.avatar);
+router.post('/avatar', upload.single('image'), SettingController.avatar);
 
 
 
