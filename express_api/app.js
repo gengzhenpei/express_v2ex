@@ -4,7 +4,7 @@ const routes = require('./routes');
 var bodyParser = require('body-parser')
 const expressJWT = require('express-jwt')
 const config = require('./config')
-
+const path = require('path')
 // 生成秘钥/解密 需要的key
 // const secretKey = 'lihaichao'
 
@@ -20,7 +20,7 @@ app.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "X-Requested-With");  //访问头
     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");  //访问方法
     res.header("X-Powered-By", ' 3.2.1');
-    res.header("Content-Type", "application/json;charset=utf-8");
+    // res.header("Content-Type", "application/json;charset=utf-8");
     if (req.method == 'OPTIONS') {
         res.setHeader("Access-Control-Allow-Headers", "*");
         res.header("Access-Control-Max-Age", 86400);
@@ -34,7 +34,7 @@ app.all('*', function (req, res, next) {
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 // 静态文件中间件
-app.use(express.static('public'));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 // 配置express-jwt 可通过 req.auth 获取token信息
 app.use(expressJWT.expressjwt({ secret: config.secretKey, algorithms: ["HS256"] }).unless({ path: config.whiteList }))
 

@@ -29,16 +29,18 @@
 									</div>
 									<span>传统尺寸的头像</span>
 									<div class="avatar-list">
-										<img src="https://cdn.v2ex.com/avatar/54c4/4164/526939_large.png?m=1677058193" class="avatar" border="0" align="default" alt="gengzhenpei">
-										<img src="https://cdn.v2ex.com/avatar/54c4/4164/526939_normal.png?m=1677058193" class="avatar" border="0" align="default" alt="gengzhenpei">
-										<img src="https://cdn.v2ex.com/avatar/54c4/4164/526939_mini.png?m=1677058193" class="avatar" border="0" align="default" alt="gengzhenpei">
+										<img :src="$baseImageURL + user_info.profile" class="avatar" border="0" align="default" style="width: 96px;" alt="gengzhenpei">
+										<img :src="$baseImageURL + user_info.profile" class="avatar" border="0" align="default" style="width: 48px;" alt="gengzhenpei">
+										<img :src="$baseImageURL + user_info.profile" class="avatar" border="0" align="default" style="width: 24px;" alt="gengzhenpei">
 									</div>
 									<a href="#" onclick="if (confirm('你确定要取消当前的头像？')) { location.href = '/settings/avatar/unset?once=18729' }">取消当前头像</a>
 								</td>
 							</tr>
 							<tr>
 								<td width="120" align="right">选择一个图片文件</td>
-								<td width="auto" align="left"><input id="input_file" type="file" name="avatar"></td>
+								<td width="auto" align="left">
+									<input @change="onFileChange" type="file" name="avatar">
+								</td>
 							</tr>
 							<tr>
 								<td width="120" align="right"></td>
@@ -49,7 +51,7 @@
 								<td width="120" align="right"></td>
 								<td width="auto" align="left">
 									<input type="hidden" value="18729" name="once">
-									<input @click.prevent="uploadObs" type="submit" class="super normal button" value="开始上传">
+									<input @click.prevent="uploadImage" type="submit" class="super normal button" value="开始上传">
 								</td>
 							</tr>
 						</tbody>
@@ -64,8 +66,11 @@
 	import dateFormat from "../../common/dateFormat";
 	import utils from "../../common/utils";
 	import {
-		setAvatar,
-	} from '@/api/setting.js'
+		settingsAvatar,
+		getUserInfo,
+	} from '@/api/settings.js'
+	import { mapState } from 'vuex'
+	
 	export default {
 		data() {
 			return {
@@ -88,27 +93,55 @@
 				cur_category_id: '',
 			};
 		},
+		computed: {
+			...mapState({
+				user_info: (state) => {
+					if(state.userInfo) {
+						return JSON.parse(state.userInfo)
+					} else {
+						return {}
+					}
+				}
+			})
+		},
 		created() {
+			this.getUserInfoFun()
 		},
 		mounted() {
 		},
 		methods: {
-			uploadObs() {
-				let _file = document.getElementById('input_file').files[0];
-				console.log("_file", _file)
-				var formData = new FormData()
-				formData.append('avatar', _file)
-				this.setAvatarFun(formData);
+			onFileChange(event) {
+				this.file = event.target.files[0];
 			},
-			async setAvatarFun(formData) {
-				console.log('formData', formData)
+			//上传图片
+			async uploadImage() {
+				const formData = new FormData();
+				formData.append('image', this.file);
 				const {
 					code,
-					error_code,
+					errorCode,
 					data,
 					msg
-				} = await setAvatar(formData)
+				} = await settingsAvatar(formData)
 				if(code == 200) {
+					this.getUserInfoFun();
+				} else {
+					this.err_msg = msg;
+				}
+			},
+			//获取用户信息
+			async getUserInfoFun() {
+				const {
+					code,
+					errorCode,
+					data,
+					msg
+				} = await getUserInfo()
+				if(code == 200) {
+					//用户信息 存在vuex中 
+					this.$store.commit('storeUserInfo', JSON.stringify(data))
+				} else {
+					this.err_msg = msg;
 				}
 			},
 		},

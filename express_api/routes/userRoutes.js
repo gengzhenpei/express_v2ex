@@ -15,7 +15,7 @@ router.post('/createUser', UserController.createUser);
 router.get('/users', UserController.getUsers);
 
 // 获取单个用户
-router.get('/users/:id', UserController.getUser);
+router.post('/getUserInfo', UserController.getUser);
 
 // 更新用户信息
 router.put('/users/:id', UserController.updateUser);

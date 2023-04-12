@@ -1,9 +1,10 @@
 import axios from 'axios'
 import qs from 'qs'
 import { Base64 } from 'js-base64'
-//import {
-//baseURL,
-//} from '@/config'
+import 
+Config
+ from '@/config/net.config'
+console.log('Config.baseURL', Config.baseURL)
 import { Message, MessageBox, Notification } from 'element-ui'
 //import store from '../store'
 //import { getToken } from '@/utils/auth'
@@ -11,7 +12,7 @@ import { Message, MessageBox, Notification } from 'element-ui'
 // 创建axios实例
 const service = axios.create({
 	//	baseURL: 'http://localhost:5000/api/v1', // api的base_url
-	baseURL: 'http://localhost:3000/api', // api的base_url
+	baseURL: Config.baseURL, // api的base_url
 	timeout: 15000, // 请求超时时间
 	headers: {
 		'Content-Type': 'application/json'
@@ -49,10 +50,10 @@ service.interceptors.request.use(
 			config.data = qs.stringify(config.data);
 			console.log('config.data', config.data)
 		}
-		if(config.data && config.headers['Content-Type'] ===
-			'multipart/form-data') {
-			config.data = qs.stringify(config.data);
-		}
+//		if(config.data && config.headers['Content-Type'] ===
+//			'multipart/form-data') {
+//			config.data = qs.stringify(config.data);
+//		}
 		if((config.method == 'get') && config.params) {
 			//			config.params = qs.stringify(config.params);
 			config.paramsSerializer = params => {

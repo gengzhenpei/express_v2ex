@@ -30,7 +30,11 @@ const User = sequelize.define('User', {
     email: {
         type: Sequelize.STRING,
         allowNull: false
-    }
+    },
+    profile: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
 });
 
 

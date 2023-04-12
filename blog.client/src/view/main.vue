@@ -114,21 +114,13 @@
 			})
 		},
 		created() {
-//			this.initUserInfo()
 		},
 		mounted() {
 			this.routeName = this.$route.name
 			window.addEventListener("scroll", this.menu);
 			this.widHeigth = "min-height:" + (window.innerHeight - 202) + "px"; //滚动的长度
-
 		},
 		methods: {
-			initUserInfo() {
-				let user_info = localStorage.getItem('user_info')
-				if(user_info) {
-					this.user_info = JSON.parse(user_info)
-				}
-			},
 			touLogin(nodesc) {
 				this.$Notice.success({
 					title: "退出成功",

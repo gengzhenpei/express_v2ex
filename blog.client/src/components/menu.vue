@@ -9,7 +9,9 @@
 						<tbody>
 							<tr>
 								<td width="48" valign="top">
-									<a href="/member/gengzhenpei"><img src="https://cdn.v2ex.com/avatar/54c4/4164/526939_large.png?m=1676467824" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" alt="gengzhenpei"></a>
+									<a href="/member/gengzhenpei">
+										<img :src="$baseImageURL + user_info.profile" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" alt="gengzhenpei">
+									</a>
 								</td>
 								<td width="10" valign="top"></td>
 								<td width="auto" align="left">

@@ -1,4 +1,3 @@
-
 import Vue from 'vue'
 import App from './App'
 import router from './router'
@@ -18,6 +17,9 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+
+import Config from '@/config/net.config'
+
 Vue.use(VueQuillEditor);
 
 Vue.use(markDown)
@@ -28,12 +30,11 @@ Vue.mixin(mixins)
 Vue.use(iView)
 /*自定义全局金额自动分割指令*/
 Vue.directive("money", {
-	inserted: function (el, v) {
+	inserted: function(el, v) {
 		console.log(el)
 		el.innerHTML = money(el.innerHTML)
 	}
 });
-
 
 Vue.use(VueLazyLoad, {
 	preLoad: 1.3,
@@ -41,6 +42,8 @@ Vue.use(VueLazyLoad, {
 	loading: require('./static/img/do_logo.png')
 })
 Vue.config.productionTip = false
+
+Vue.prototype.$baseImageURL = Config.baseImageURL
 
 new Vue({
 	el: '#app',

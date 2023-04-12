@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const { Resolve } = require('../utils/helper');
 const resolve = new Resolve();
-
+const path = require('path');
+const fs = require('fs');
 // 生成秘钥/解密 需要的key
 const secretKey = 'lihaichao'
 // 定义用户输入数据的校验规则
@@ -19,17 +20,34 @@ const Schema = Joi.object({
 exports.avatar = async (req, res) => {
 	try {
 		// 处理上传文件的逻辑
-  		// req.file 包含上传的文件信息
-		console.log('req', req)
-  		const imageUrl = `${req.protocol}://${req.get('host')}/${req.file.path}`;
-		console.log('imageUrl', imageUrl)
-		
+		// req.file 包含上传的文件信息
+		const file = req.file;
+		const oldPath = file.path;
+		// const oldPath = path.join(__dirname, '..', 'tmp')
+		console.log('oldPath', oldPath)
+		const newPath = path.join(__dirname, '..', 'public', 'images', file.originalname);
 
-		res.json(resolve.json(imageUrl));
-	} catch (error) {
-		res.status(500).json({
-			message: error.message
+		// 将文件从 tmp/ 目录移动到 public/images/ 目录中
+		fs.rename(oldPath, newPath, async err => {
+			if (err) {
+				console.error(err);
+				res.json(resolve.fail('上传失败'));
+			} else {
+				const imageUrl = `${req.protocol}://${req.get('host')}/public/images/${file.originalname}`;
+				const data_url = `/public/images/${file.originalname}`;
+				//存user表里
+				console.log('req.auth.id', req.auth.id)
+				await User.update({ profile: data_url }, {
+					where: {
+						id: req.auth.id
+					}
+				});
+				res.json(resolve.json(data_url));
+			}
 		});
+
+	} catch (error) {
+		res.json(resolve.fail(error));
 	}
 };
 
