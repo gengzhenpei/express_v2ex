@@ -7,9 +7,9 @@
 				<h2>设置</h2>
 			</div>
 			<div class="cell">
-				<a href="/settings/profile" class="tab_current">个人主页</a>
+				<a href="/settings/profile" class="tab">个人主页</a>
 				<a href="/settings/social" class="tab">社交网络</a>
-				<a href="/settings/avatar" class="tab">头像</a>
+				<a href="/settings/avatar" class="tab_current">头像</a>
 				<a href="/settings/password" class="tab">密码</a>
 				<a href="/settings/tokens" class="tab">Tokens</a>
 				<a href="/settings/2fa" class="tab">2FA</a>

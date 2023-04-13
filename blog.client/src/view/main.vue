@@ -17,7 +17,7 @@
 							<a href="/member/gengzhenpei" class="top">{{user_info.name}}</a>
 							<a href="/notes" class="top">记事本</a>
 							<a href="/t" class="top">时间轴</a>
-							<a href="/settings" class="top">设置</a>
+							<a href="/settings/profile" class="top">设置</a>
 							<a href="#;" onclick="if (confirm('确定要从 V2EX 登出？')) { location.href= '/signout?once=68999'; }" class="top">登出</a>
 						</template>
 						<template v-else>

@@ -21,7 +21,7 @@
 						<tr>
 							<td width="48" valign="top" align="center">
 								<a href="/member/kekeyao">
-									<img v-lazy="item.cover" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" alt="kekeyao">
+									<img v-lazy="$baseImageURL+item.User.profile" class="avatar" border="0" align="default" width="48" style="width: 48px; max-height: 48px;" alt="kekeyao">
 								</a>
 							</td>
 							<td width="10"></td>
@@ -103,8 +103,6 @@
 			}
 		},
 		mounted() {
-			document.title = "时刻点官网";
-
 			this.nav = [];
 			var index = {
 				path: "/index",

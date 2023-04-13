@@ -209,7 +209,6 @@
 			}
 		},
 		mounted() {
-			document.title = "时刻点官网";
 		},
 		methods: {
 			async getData() {

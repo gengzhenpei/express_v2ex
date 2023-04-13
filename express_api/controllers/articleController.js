@@ -47,7 +47,7 @@ exports.ArticlesList = async (req, res) => {
 			include: [
 				{
 					model: User,
-					attributes: ['id', 'name', 'email']
+					attributes: ['id', 'name', 'email', 'profile']
 				},
 				{
 					model: Category,
@@ -92,7 +92,7 @@ exports.getAllArticles = async (req, res) => {
 			include: [
 				{
 					model: User,
-					attributes: ['id', 'name', 'email']
+					attributes: ['id', 'name', 'email', 'profile']
 				},
 				{
 					model: Category,

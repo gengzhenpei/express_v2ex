@@ -52,8 +52,8 @@ export default new Router({
 					component: resolve => require(['../view/signup/signout.vue'], resolve)
 				},
 				{
-					path: '/settings',
-					name: 'settings',
+					path: '/settings/profile',
+					name: 'profile',
 					component: resolve => require(['../view/settings/index.vue'], resolve)
 				}, 
 				{

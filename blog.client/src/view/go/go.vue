@@ -133,7 +133,6 @@
 			this.categoryDetailFun();
 		},
 		mounted() {
-			document.title = "时刻点官网";
 			this.nav = [];
 			var index = {
 				path: "/index",
