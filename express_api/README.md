@@ -16,7 +16,7 @@ npm2 -v 3.5.1
 .
 ├─blog.client                   //客户端
 ├─express_api                 //服务端
-└─blog.client/data/sql.js                       //表结构
+└─express_api/data/my_database.js                       //表结构和数据
 ```
 
 ### 安装
