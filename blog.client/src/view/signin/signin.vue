@@ -100,6 +100,7 @@
 		methods: {
 			//登录
 			async loginFun() {
+				this.err_msg = '';
 				const {
 					code,
 					err,

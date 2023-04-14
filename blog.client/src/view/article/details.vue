@@ -91,12 +91,12 @@
 			</div>
 			<div class="cell">
 				<!--<form>-->
-					<textarea v-model="form.content" name="content" maxlength="10000" class="mll" style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 112px;"></textarea>
-					<div class="flex-one-row" style="margin-top: 10px;">
-						<span @click="submitReply" value="回复" class="super normal button" style="width: 62px;">回复</span>
-						<!--<input type="hidden" value="39705" id="once" name="once">-->
-						<span class="gray">请尽量让自己的回复能够对别人有帮助</span>
-					</div>
+				<textarea v-model="form.content" name="content" maxlength="10000" class="mll" style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 112px;"></textarea>
+				<div class="flex-one-row" style="margin-top: 10px;">
+					<span @click="submitReply" value="回复" class="super normal button" style="width: 62px;">回复</span>
+					<!--<input type="hidden" value="39705" id="once" name="once">-->
+					<span class="gray">请尽量让自己的回复能够对别人有帮助</span>
+				</div>
 				<!--</form>-->
 			</div>
 			<div class="cell flex-row-end">
@@ -120,10 +120,10 @@
 	} from '@/api/comment.js'
 
 	export default {
-//		components: {
-//			reA,
-//			Vmenu
-//		},
+		//		components: {
+		//			reA,
+		//			Vmenu
+		//		},
 		data() {
 			return {
 				article: '',
@@ -177,7 +177,9 @@
 					data,
 					code,
 					msg
-				} = await detail({id: this.$route.params.id})
+				} = await detail({
+					id: this.$route.params.id
+				})
 				if(code == 200) {
 					self.article = data;
 					document.title = data.title || '404从你的全世界路过！';
@@ -366,8 +368,6 @@
 		color: var(--color-gray);
 	}
 	
-	
-	
 	a.tb:active,
 	a.tb:link,
 	a.tb:visited {
@@ -383,5 +383,13 @@
 	
 	#topic_thank {
 		display: inline-block;
+	}
+	
+	pre {
+		white-space: pre-wrap;
+		white-space: -moz-pre-wrap;
+		white-space: -pre-wrap;
+		white-space: -o-pre-wrap;
+		word-wrap: break-word;
 	}
 </style>

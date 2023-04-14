@@ -48,7 +48,7 @@
 				<div class="cell" style="display: flex; align-items: center;">
 					<div style="margin-right: 5px;">主题节点</div>
 					<div class="">
-						<el-cascader v-model="form.category_id" @change="cascaderHandler" :options="cascade_category" :props="{'value': 'id', label: 'name'}" size="mini"></el-cascader>
+						<el-cascader v-model="default_category" @change="cascaderHandler" :options="cascade_category" :props="{'value': 'id', label: 'name'}" size="mini"></el-cascader>
 					</div>
 					<div style="margin-left: auto;">
 						<a href="/help/node" target="_blank">V2EX 节点使用说明</a> <i class="fa fa-external-link gray"></i>
@@ -95,8 +95,9 @@
 					title: "",
 					email: "",
 					classify: [],
-					category_id: [],
+					category_id: '',
 				},
+				default_category: [],
 				ruleValidate: {
 					title: [{
 						required: true,
@@ -206,13 +207,14 @@
 			await this.getCategory();
 			let category_id = this.$route.query.node;
 			if(category_id) {
-				this.form.category_id.push(Number(category_id))
+				this.default_category.push(Number(category_id))
+				this.form.category_id = Number(category_id)
 				//取父节点
 				this.category_list.forEach(item => {
 					if(item.id == category_id) {
 						if(item.parent_id) {
 							let p_id = item.parent_id
-							this.form.category_id.unshift(Number(p_id))
+							this.default_category.unshift(Number(p_id))
 						}
 					}
 				})
@@ -220,7 +222,6 @@
 		},
 		methods: {
 			async addArticleFun() {
-				console.log('this.form.category_id', this.form.category_id)
 				const {
 					data,
 					code,
@@ -296,12 +297,6 @@
 			publishTopic(name) {
 				this.addArticleFun()
 			},
-			oneSelect() {
-				console.log('form.category_id', this.form.category_id)
-				if(this.first_select_value) {
-					this.two_select_show = true;
-				}
-			},
 			// 上传图片
 			uploadImage(e) {
 				console.log(e, e.name)
@@ -322,7 +317,7 @@
 				// 获取到点击图片的url
 			},
 			cascaderHandler(selected_val) {
-				this.form.category_id = selected_val[1];
+				this.form.category_id = selected_val[selected_val.length-1];
 			},
 			mavonChange() {
 				this.content = this.$refs.md.d_render;
